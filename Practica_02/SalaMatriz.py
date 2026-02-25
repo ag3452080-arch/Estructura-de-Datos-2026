@@ -1,6 +1,4 @@
-
-
-F, C = 6, 6
+F, C = 6,6
 asientos = [[False for _ in range(C)] for _ in range(F)]
 
 def reservar(i, j):
@@ -23,7 +21,7 @@ def consultar(i, j):
 
 def resumen_final():
     total_reservados = sum(sum(1 for asiento in fila if asiento) for fila in asientos)
-    fila_max = max(range(F), key=lambda f: sum(asientos[f]))
+    fila_max = max(range(F), key=lambda f: sum(asientos[f])) 
     max_reservados = sum(asientos[fila_max])
     
     print("Total de asientos reservados:", total_reservados)
