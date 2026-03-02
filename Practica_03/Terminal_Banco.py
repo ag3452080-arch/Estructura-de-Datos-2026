@@ -5,7 +5,8 @@
 # se debe presentar el saldo de cada persona despues de cada operacion
 #En el enque se debe presentar su saldo, retiro,deposito
 #A cada persona se le asigna un saldo inicial de 1000 pesos
-#Se debe generar al final el slado de cada perosna despues de las 5 operaciones
+#Se debe generar al final el slado de cada perosna despues de las 5 operaciones,con el saldo inicial,
+#el retiro y el deposito de cada persona
 
 def enque(lista, elemento):
     lista.append(elemento)
@@ -21,7 +22,7 @@ def retiros(lista, lista2):
 
 def depositos(lista, lista2):
     r = lista[0] + lista2[0]
-    deque(lista, lista2)
+    deque (lista, lista2)
     enque(lista, r)
 
 def peek(lista):
