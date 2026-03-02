@@ -7,41 +7,48 @@
 #A cada persona se le asigna un saldo inicial de 1000 pesos
 #Se debe generar al final el slado de cada perosna despues de las 5 operaciones
 
-def enque(elemento, lista):
+def enque(lista, elemento):
     lista.append(elemento)
 
-def deque(lista):
-    if not isEmpty(lista):
-        return lista.pop(0)
+def deque(lista, lista2):
+    enque(lista2, lista[0])
+    lista.pop(0)
+
+def retiros(lista, lista2):
+    r = lista[0] - lista2[0]
+    deque(lista, lista2)
+    enque(lista, r)
+
+def depositos(lista, lista2):
+    r = lista[0] + lista2[0]
+    deque(lista, lista2)
+    enque(lista, r)
 
 def peek(lista):
     return lista[0]
 
-def isEmpty(lista):
+def is_empty(lista):
     return lista == []
 
 def size(lista):
     return len(lista)
 
-def retiro(saldo, cantidad):
-    return saldo - cantidad
+saldos   = [1000, 1000, 1000, 1000, 1000]
+retiro   = [500]
+deposito = [300]
 
-def depositar(saldo, deposito):
-    return saldo + deposito
+print("Saldos iniciales:", saldos)
 
+retiros(saldos, retiro)
+retiros(saldos, retiro)
+retiros(saldos, retiro)
+retiros(saldos, retiro)
+retiros(saldos, retiro)
+print("Saldos tras retiros:", saldos)
 
-saldos = [] 
-enque(1000, saldos) 
-enque(1000, saldos) 
-enque(1000, saldos) 
-enque(1000, saldos) 
-enque(1000, saldos)
-print("Saldo inicial de cada persona:", saldos)
-
-saldos[0] = depositar(retiro(saldos[0], 500), 300) 
-saldos[1] = depositar(retiro(saldos[1], 500), 300) 
-saldos[2] = depositar(retiro(saldos[2], 500), 300) 
-saldos[3] = depositar(retiro(saldos[3], 500), 300) 
-saldos[4] = depositar(retiro(saldos[4], 500), 300)
-
-print("Saldo después de la primera operación:", saldos)
+depositos(saldos, deposito)
+depositos(saldos, deposito)
+depositos(saldos, deposito)
+depositos(saldos, deposito)
+depositos(saldos, deposito)
+print("Saldos tras depósitos:", saldos)
