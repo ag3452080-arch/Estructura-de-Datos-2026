@@ -21,9 +21,9 @@ def retiros(lista, lista2):
     enque(lista, r)
 
 def depositos(lista, lista2):
-    r = lista[0] + lista2[0]
+    s = lista[0] + lista2[0]
     deque (lista, lista2)
-    enque(lista, r)
+    enque(lista, s)
 
 def peek(lista):
     return lista[0]
@@ -45,7 +45,7 @@ retiros(saldos, retiro)
 retiros(saldos, retiro)
 retiros(saldos, retiro)
 retiros(saldos, retiro)
-print( "Saldos depues de retirar ",saldos)
+print( "Saldos despues de retirar ",saldos)
 
 depositos(saldos, deposito)
 depositos(saldos, deposito)
