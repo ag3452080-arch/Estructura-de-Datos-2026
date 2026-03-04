@@ -10,7 +10,7 @@ class Bicola:
     def enque_back(self, elemento):
         self.cola.append(elemento)
 
-    # Eliminar por el frente
+    # Eliminar por el frente 
     def dequeue_front(self):
         if self.is_empty():
             raise IndexError("Bicola vacía")
@@ -65,8 +65,8 @@ saldos = Bicola()
 historial_retiros = Bicola()
 historial_depositos = Bicola()
 
-for _ in range(5):
-    saldos.enque_back(1000)
+valores_iniciales = [1000, 1000, 1000, 1000, 1000] 
+for v in valores_iniciales: saldos.enque_back(v)
 
 monto_retiro = 500
 monto_deposito = 300
