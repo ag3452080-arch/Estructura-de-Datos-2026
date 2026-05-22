@@ -1,0 +1,2244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estructuras de Datos - Python</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Inter', Arial, sans-serif;
+  background: #f4f5f9;
+  color: #333;
+  font-size: 14px;
+}
+
+#app { display: flex; height: 100vh; }
+#sidebar { width: 220px; min-width: 220px; background: #fff; border-right: 1px solid #e2e4ec; display: flex; flex-direction: column; overflow: hidden; }
+#main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+#logo { padding: 14px 14px 12px; border-bottom: 1px solid #e2e4ec; }
+#logo h1 { font-size: 13px; font-weight: 600; color: #333; }
+#logo p { font-size: 11px; color: #aaa; margin-top: 3px; font-family: 'Source Code Pro', monospace; }
+
+#nav { flex: 1; overflow-y: auto; padding: 4px 0 12px; }
+#nav::-webkit-scrollbar { width: 4px; }
+#nav::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+.cat { padding: 10px 12px 3px; font-size: 10px; font-weight: 600; color: #bbb; text-transform: uppercase; letter-spacing: 0.07em; }
+.item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; font-size: 12.5px; cursor: pointer; color: #555; border-left: 2px solid transparent; line-height: 1.4; }
+.item:hover { background: #f0f2fa; color: #222; }
+.item.on { background: #eef1ff; border-left-color: #5a67f2; color: #3a46c9; font-weight: 600; }
+.dot { width: 7px; height: 7px; border-radius: 2px; flex-shrink: 0; }
+
+#topbar { display: flex; align-items: center; gap: 10px; padding: 0 16px; height: 46px; border-bottom: 1px solid #e2e4ec; background: #fff; flex-shrink: 0; }
+#pname { font-size: 13px; font-weight: 600; flex: 1; color: #222; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#pbadge { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-family: 'Source Code Pro', monospace; background: #f0f2fa; color: #999; border: 1px solid #e2e4ec; }
+.tb { padding: 4px 12px; font-size: 12px; border: 1px solid #dde0ed; border-radius: 6px; cursor: pointer; background: #f4f5f9; color: #666; font-family: 'Inter', sans-serif; white-space: nowrap; }
+.tb:hover { background: #eef1ff; color: #3a46c9; border-color: #b0b8f0; }
+.tb.on { background: #eef1ff; border-color: #5a67f2; color: #3a46c9; font-weight: 600; }
+
+#panels { flex: 1; display: flex; overflow: hidden; }
+
+#viz { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+#vizbar { display: flex; align-items: center; gap: 8px; padding: 7px 14px; border-bottom: 1px solid #e2e4ec; flex-shrink: 0; flex-wrap: wrap; background: #fff; }
+#vdesc { font-size: 12px; color: #999; flex: 1; min-width: 80px; }
+.cbtn { padding: 4px 12px; font-size: 12px; border: 1px solid #dde0ed; border-radius: 6px; cursor: pointer; background: #f4f5f9; color: #555; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+.cbtn:hover { background: #eef1ff; color: #3a46c9; }
+.cbtn.play { background: #5a67f2; border-color: #5a67f2; color: #fff; }
+.cbtn.play:hover { background: #4a56d9; }
+#spd { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #bbb; white-space: nowrap; }
+#spd input { width: 65px; accent-color: #5a67f2; }
+#cvwrap { flex: 1; position: relative; overflow: hidden; background: #f4f5f9; display: flex; align-items: center; justify-content: center; }
+canvas { display: block; }
+#info { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); background: #fff; border: 1px solid #e2e4ec; padding: 5px 16px; border-radius: 20px; font-size: 12px; font-family: 'Source Code Pro', monospace; color: #5a67f2; max-width: 92%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+
+#codepanel { width: 400px; min-width: 280px; border-left: 1px solid #e2e4ec; display: flex; flex-direction: column; overflow: hidden; background: #fff; }
+#codebar { padding: 8px 12px; border-bottom: 1px solid #e2e4ec; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; gap: 8px; background: #fff; }
+#codebar span { font-size: 12px; font-weight: 600; color: #aaa; }
+#codebar .right { display: flex; gap: 6px; align-items: center; }
+.cbarbtn { padding: 3px 10px; font-size: 11px; border: 1px solid #dde0ed; border-radius: 6px; cursor: pointer; background: #f4f5f9; color: #666; font-family: 'Inter', sans-serif; white-space: nowrap; }
+.cbarbtn:hover { background: #eef1ff; color: #3a46c9; }
+#filename { font-size: 11px; color: #5a67f2; font-family: 'Source Code Pro', monospace; }
+#codebody { flex: 1; overflow: auto; padding: 14px 16px; background: #fafbff; }
+#codebody::-webkit-scrollbar { width: 4px; }
+#codebody::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
+pre { font-family: 'Source Code Pro', monospace; font-size: 12.5px; line-height: 1.75; color: #334; white-space: pre; tab-size: 4; }
+
+.kw { color: #5a36d4; font-weight: 600; }
+.fn { color: #0a7aba; }
+.st { color: #b84c20; }
+.cm { color: #6a9955; font-style: italic; }
+.nm { color: #1a8060; }
+.bi { color: #0a6fa0; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="sidebar">
+    <div id="logo">
+      <h1>Estructuras de Datos</h1>
+    </div>
+    <div id="nav"></div>
+  </div>
+  <div id="main">
+    <div id="topbar">
+      <span id="pname">Selecciona un ejercicio</span>
+      <span id="pbadge"></span>
+      <div style="flex:1"></div>
+      <button class="tb on" onclick="setMode('both')">Ambos</button>
+      <button class="tb" onclick="setMode('viz')">Visual</button>
+      <button class="tb" onclick="setMode('code')">Codigo</button>
+    </div>
+    <div id="panels">
+      <div id="viz">
+        <div id="vizbar">
+          <span id="vdesc">—</span>
+          <div id="spd">Vel:<input type="range" id="speed" min="1" max="5" value="3"></div>
+          <button class="cbtn" onclick="doReset()">Reiniciar</button>
+          <button class="cbtn play" onclick="doPlay()">Animar</button>
+        </div>
+        <div id="cvwrap"><canvas id="cv"></canvas></div>
+        <div id="info">← Selecciona un ejercicio del menú</div>
+      </div>
+      <div id="codepanel">
+        <div id="codebar">
+          <span>Código Python</span>
+          <div class="right">
+            <span id="filename"></span>
+            <button class="cbarbtn" onclick="doCopy()">Copiar</button>
+          </div>
+        </div>
+        <div id="codebody"><pre id="codedisp">// Selecciona un programa del menú lateral</pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+//  Catalo de archivo hechos en clase
+const CATS = [
+{name:"Arreglos", color:"#7c6dfa", items:[
+  {id:"arr_uni", file:"Arreglo_Unidimesional.py", name:"Arreglo sin duplicados",
+   desc:"Elimina elementos repetidos de un arreglo ordenado de forma creciente",
+   viz:"dedup",
+   code:`#Dado un arreglo unidimensional de numeros enteros, ordenalos crecientemente, escribe un programa que
+#elimine todos los elementos repetidos. Considere que de haber valores repetidos, estos se encontraran en posiciones
+#consecutivas del arreglo.
+
+x = [1,2,4,4,5,7,9,10,11,11,13,14,15,16,16]
+print("Arreglo original",x)
+y = []
+for i in x:
+    if i not in y:
+        y.append(i)
+print("Arreglo sin repetidos",y)`},
+
+  {id:"cadena", file:"Cadena_Caracteres.py", name:"Cadena de caracteres",
+   desc:"Cuenta cuántas veces aparece cada letra en una cadena",
+   viz:"freq",
+   code:`#Dada una cadena de caracteres como dato, saber el numero de veces que aparecen las letras "a","b"..."z" y "A", "B"..."Z" en dicha cadena.
+print("Parte 1: con arreglos")
+Cadena = "Parangaricutirimicuaro"
+print(Cadena)
+minusculas = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
+mayusculas = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
+
+for i in mayusculas:
+    contador = 0
+    for j in Cadena:
+        if i == j:
+            contador += 1
+    if contador > 0:
+        print("La letra ",i," aparece ",contador," veces")
+
+for i in minusculas:
+    contador = 0
+    for j in Cadena:
+        if i == j:
+            contador += 1
+    if contador > 0:
+        print("La letra ",i," aparece ",contador," veces")
+
+print("------------------------------------------------")
+print("Parte 2: sin arreglos")
+Cadena = "Parangaricutirimicuaro"
+Cadena = Cadena.lower()
+a = b = c = d = e = f = g = h = i = j = k = l = m = n = o = p = q = r = s = t = u = v = w = x = y = z = 0
+
+for letra in Cadena:
+    if letra == "a": a += 1
+    if letra == "b": b += 1
+    if letra == "c": c += 1
+    if letra == "d": d += 1
+    if letra == "e": e += 1
+    if letra == "r": r += 1
+    if letra == "i": i += 1
+    if letra == "n": n += 1
+    if letra == "g": g += 1
+    if letra == "u": u += 1
+    if letra == "t": t += 1
+    if letra == "m": m += 1
+    if letra == "o": o += 1
+    if letra == "p": p += 1
+
+print("a:", a, "| c:", c, "| g:", g, "| i:", i, "| m:", m)
+print("n:", n, "| o:", o, "| p:", p, "| r:", r, "| t:", t, "| u:", u)`},
+
+  {id:"calf", file:"Calificaciones_Finales.py", name:"Calificaciones finales",
+   desc:"Ordena calificaciones y calcula promedio, aprobados y reprobados",
+   viz:"grades",
+   code:`Cal_alumnos = [8,8,7,5,0,9,9,5,6,10]
+Cal_alumnos.sort()
+print(Cal_alumnos)
+
+suma_calificaciones = 0
+for i in Cal_alumnos:
+    suma_calificaciones += i
+print(suma_calificaciones)
+
+promedio_cal = suma_calificaciones / len(Cal_alumnos)
+print(promedio_cal)
+
+aprobado = 0
+reporobado = 0
+
+for i in Cal_alumnos:
+    if i >= 7:
+        aprobado += 1
+    else:
+        reporobado += 1
+
+aprobados_porcentaje = (aprobado / promedio_cal) * 100
+reporobado_porcentaje = (reporobado / promedio_cal) * 100
+print("Aprobados: ", aprobado)
+print("Reprobados: ", reporobado)
+print("Porcentaje aprobados ", aprobados_porcentaje, "%")
+print("Porcentaje de reprobados ", reporobado_porcentaje, "%")`},
+
+  {id:"ton", file:"Toneladas_Cereales.py", name:"Toneladas de cereales",
+   desc:"Analiza cosecha: suma, promedio, sobre/bajo el promedio",
+   viz:"harvest",
+   code:`tonelada_cosecha = [12,24,16,15,20,18,6,10,12,11,14,15,12]
+tonelada_cosecha.sort()
+print(tonelada_cosecha)
+
+suma_toneladas = 0
+for i in tonelada_cosecha:
+    suma_toneladas += i
+print("Suma de toneladas: ", suma_toneladas)
+
+promedio_toneladas = suma_toneladas / len(tonelada_cosecha)
+print("Promedio de toneladas: ", promedio_toneladas)
+
+for i in tonelada_cosecha:
+    if i > promedio_toneladas:
+        print(i)
+
+for i in tonelada_cosecha:
+    if i < promedio_toneladas:
+        print(i)`},
+]},
+
+{name:"Matrices", color:"#3ecf8e", items:[
+  {id:"coord", file:"CoordenadasMatrices.py", name:"Coordenadas en matriz",
+   desc:"Encuentra todas las posiciones donde aparece el valor 7 en la matriz",
+   viz:"msearch",
+   code:`A = [
+    [4,7,2,9,5,7],
+    [1,3,7,6,8,0],
+    [9,2,5,7,4,6],
+    [8,7,1,3,7,2],
+    [5,0,6,4,2,9],
+    [7,8,9,2,1,7]
+]
+
+listaCoordenadas = []
+
+for i, fila in enumerate(A):
+    for j, valor in enumerate(fila):
+        if valor == 7:
+            listaCoordenadas.append((i+1, j+1))
+
+if listaCoordenadas == []:
+    print("No encontrado")
+else:
+    print(listaCoordenadas)`},
+
+  {id:"mmul", file:"Matrices.py", name:"Multiplicación de matrices",
+   desc:"Multiplica dos matrices 3×3 usando tres bucles anidados",
+   viz:"mmult",
+   code:`#Multiplicacion de matrices
+A = [[5, 6, 13],
+     [3, 10, 1],
+     [2, 11, 3]]
+
+B = [[1, 2, 1],
+     [6, 5, 15],
+     [3, 11, 12]]
+
+C = [[0,0,0],
+     [0,0,0],
+     [0,0,0]]
+
+for i in range(len(A)):
+    for j in range(len(B[0])):
+        for k in range(len(B)):
+            C[i][j] += A[i][k] * B[k][j]
+
+for fila in C:
+    print(fila)`},
+
+  {id:"sala", file:"SalaMatriz.py", name:"Sala de cine",
+   desc:"Gestiona reservas y liberaciones de asientos en sala 6×6",
+   viz:"cinema",
+   code:`F, C = 6, 6
+asientos = [[False for _ in range(C)] for _ in range(F)]
+
+def reservar(i, j):
+    if not asientos[i][j]:
+        asientos[i][j] = True
+        return f"OK: reservado ({i+1},{j+1})"
+    else:
+        return f"RECHAZO: ocupado ({i+1},{j+1})"
+
+def liberar(i, j):
+    if asientos[i][j]:
+        asientos[i][j] = False
+        return f"OK: liberado ({i+1},{j+1})"
+    else:
+        return f"RECHAZO: ya libre ({i+1},{j+1})"
+
+def consultar(i, j):
+    estado = "reservado" if asientos[i][j] else "libre"
+    return f"Estado ({i+1},{j+1}) = {estado}"
+
+def resumen_final():
+    total_reservados = sum(sum(1 for asiento in fila if asiento) for fila in asientos)
+    fila_max = max(range(F), key=lambda f: sum(asientos[f]))
+    max_reservados = sum(asientos[fila_max])
+    print("Total de asientos reservados:", total_reservados)
+    print("Fila con más reservados:", fila_max+1, f"({max_reservados})")
+
+operaciones = [
+    ("RESERVAR", 1, 1),
+    ("RESERVAR", 1, 2),
+    ("RESERVAR", 1, 1),
+    ("CONSULTAR", 1, 2),
+    ("LIBERAR", 1, 2),
+    ("LIBERAR", 1, 2),
+    ("RESERVAR", 1, 2),
+    ("RESERVAR", 6, 6),
+    ("CONSULTAR", 6, 6),
+    ("RESERVAR", 2, 5)
+]
+
+for accion, i, j in operaciones:
+    i -= 1
+    j -= 1
+    if accion == "RESERVAR":
+        print(reservar(i, j))
+    elif accion == "LIBERAR":
+        print(liberar(i, j))
+    elif accion == "CONSULTAR":
+        print(consultar(i, j))
+
+resumen_final()`},
+
+  {id:"df", file:"dataframe.py", name:"DataFrame estadístico",
+   desc:"Calcula media, moda, varianza y desviación estándar con pandas",
+   viz:"none",
+   code:`import pandas as pd
+import math
+
+# Leer el archivo CSV delimitados por comas (por defecto)
+# IMPORTANTE: cambia la ruta a la ubicación de tu archivo Housing1.csv
+df = pd.read_csv("Housing1.csv")
+
+# Mostrar las primeras 5 filas
+print(df.head())
+lista = list(df["price"])
+
+print("Media de los datos")
+suma = 0
+for i in lista:
+    suma += i
+
+suma_cuadrados = 0
+for i in lista:
+    suma_cuadrados += (i - suma / len(lista)) ** 2
+varianza = suma_cuadrados / len(lista)
+desviacion = varianza ** 0.5
+
+print("La media es: ", suma / len(lista))
+print("La moda es: ", df["price"].mode())
+print("La varianza es: ", varianza)
+print("La desviacion es: ", desviacion)
+
+# Lista de columnas a analizar
+columnas = ["price","bedrooms","bathrooms","sqft_living","sqft_lot",
+            "floors","waterfront","view","condition","grade",
+            "sqft_above","sqft_basement","yr_built"]
+
+def calcular_media(lista):
+    return sum(lista) / len(lista)
+
+def calcular_moda(lista):
+    frecuencias = {}
+    for valor in lista:
+        frecuencias[valor] = frecuencias.get(valor, 0) + 1
+    max_frec = max(frecuencias.values())
+    modas = [k for k,v in frecuencias.items() if v == max_frec]
+    return modas
+
+def calcular_varianza(lista):
+    media = calcular_media(lista)
+    suma_cuadrados = sum((x - media) ** 2 for x in lista)
+    return suma_cuadrados / len(lista)
+
+def calcular_desviacion(lista):
+    return math.sqrt(calcular_varianza(lista))
+
+for col in columnas:
+    lista = list(df[col])
+    print(f"Columna: {col}")
+    print("  Media:", calcular_media(lista))
+    print("  Moda:", calcular_moda(lista))
+    print("  Varianza:", calcular_varianza(lista))
+    print("  Desviación estándar:", calcular_desviacion(lista))
+    print("-"*40)`},
+]},
+
+{name:"Colas", color:"#f5a623", items:[
+  {id:"icolas", file:"Implementacion_colas.py", name:"Implementación básica de colas",
+   desc:"Operaciones fundamentales: enque, deque, peek, isEmpty, size",
+   viz:"qbasic",
+   code:`def enque(elemento, lista):
+    lista.append(elemento)
+
+def deque(lista):
+    lista.pop(0)
+
+def peek(lista):
+    return lista[0]
+
+def isEmpty(lista):
+    if lista == []:
+        return True
+    else:
+        return False
+
+def size(lista):
+    return len(lista)
+
+lista = []
+
+print(isEmpty(lista))
+enque(1, lista)
+print(lista)
+print(isEmpty(lista))
+deque(lista)
+print(isEmpty(lista))
+enque(8, lista)
+enque(7, lista)
+print(peek(lista))
+size(lista)
+print(size(lista))`},
+
+  {id:"tbanco", file:"Terminal_Banco.py", name:"Terminal de banco",
+   desc:"Simula 5 personas con retiro de $500 y depósito de $300",
+   viz:"bank",
+   code:`#Crear una pequeña terminal donde se utilice el enque,peek,size,deque,isEmpty
+#Se debe realizar tres colas
+#Para simular una terminal de banco
+#Se debe presentar 5 personas con un retiro de 500 pesos y un deposito de 300 pesos
+#A cada persona se le asigna un saldo inicial de 1000 pesos
+
+def enque(lista, elemento):
+    lista.append(elemento)
+
+def deque(lista, lista2):
+    enque(lista2, lista[0])
+    lista.pop(0)
+
+def retiros(lista, lista2):
+    r = lista[0] - lista2[0]
+    deque(lista, lista2)
+    enque(lista, r)
+
+def depositos(lista, lista2):
+    s = lista[0] + lista2[0]
+    deque(lista, lista2)
+    enque(lista, s)
+
+def peek(lista):
+    return lista[0]
+
+def is_empty(lista):
+    return lista == []
+
+def size(lista):
+    return len(lista)
+
+saldos   = [1000, 1000, 1000, 1000, 1000]
+retiro   = [500]
+deposito = [300]
+
+print("Saldos iniciales:", saldos)
+
+retiros(saldos, retiro)
+retiros(saldos, retiro)
+retiros(saldos, retiro)
+retiros(saldos, retiro)
+retiros(saldos, retiro)
+print("Saldos despues de retirar ", saldos)
+
+depositos(saldos, deposito)
+depositos(saldos, deposito)
+depositos(saldos, deposito)
+depositos(saldos, deposito)
+depositos(saldos, deposito)
+print("Saldos despues de depositar:", saldos)`},
+
+  {id:"bicolas", file:"Bicolas.py", name:"Bicola (Deque)",
+   desc:"Cola doble: inserción y eliminación por ambos extremos con historial bancario",
+   viz:"deqv",
+   code:`class Bicola:
+    def __init__(self):
+        self.cola = []
+
+    def enque_front(self, elemento):
+        self.cola.insert(0, elemento)
+
+    def enque_back(self, elemento):
+        self.cola.append(elemento)
+
+    def dequeue_front(self):
+        if self.is_empty():
+            raise IndexError("Bicola vacía")
+        return self.cola.pop(0)
+
+    def dequeue_back(self):
+        if self.is_empty():
+            raise IndexError("Bicola vacía")
+        return self.cola.pop()
+
+    def peek_front(self):
+        if self.is_empty():
+            raise IndexError("Bicola vacía")
+        return self.cola[0]
+
+    def peek_back(self):
+        if self.is_empty():
+            raise IndexError("Bicola vacía")
+        return self.cola[-1]
+
+    def is_empty(self):
+        return len(self.cola) == 0
+
+    def size(self):
+        return len(self.cola)
+
+    def mostrar(self):
+        return list(self.cola)
+
+
+def aplicar_retiro(saldos, monto, historial=None):
+    saldo_original = saldos.dequeue_front()
+    if historial is not None:
+        historial.enque_back(saldo_original)
+    nuevo_saldo = saldo_original - monto
+    saldos.enque_back(nuevo_saldo)
+
+def aplicar_deposito(saldos, monto, historial=None):
+    saldo_original = saldos.dequeue_front()
+    if historial is not None:
+        historial.enque_back(saldo_original)
+    nuevo_saldo = saldo_original + monto
+    saldos.enque_back(nuevo_saldo)
+
+
+saldos = Bicola()
+historial_retiros = Bicola()
+historial_depositos = Bicola()
+
+valores_iniciales = [1000, 1000, 1000, 1000, 1000]
+for v in valores_iniciales:
+    saldos.enque_back(v)
+
+monto_retiro = 500
+monto_deposito = 300
+
+for _ in range(5):
+    aplicar_retiro(saldos, monto_retiro, historial_retiros)
+
+for _ in range(5):
+    aplicar_deposito(saldos, monto_deposito, historial_depositos)
+
+print("Historial (saldos antes del retiro):", historial_retiros.mostrar())
+print("Historial (saldos antes del depósito):", historial_depositos.mostrar())
+print("Saldos finales:", saldos.mostrar())`},
+
+  {id:"colac", file:"ColaCircular.py", name:"Cola circular (clase)",
+   desc:"Implementación con arreglo circular, frente y final como índices",
+   viz:"circq",
+   code:`class colaCircular:
+    def __init__(self, capacidad):
+        self.capacidad = capacidad
+        self.cola = [None] * capacidad
+        self.frente = -1
+        self.final = -1
+
+    def esta_llena(self):
+        return (self.final + 1) % self.capacidad == self.frente
+
+    def esta_vacia(self):
+        return self.frente == -1
+
+    def encolar(self, dato):
+        if self.esta_llena():
+            print("La cola está llena")
+            return
+        if self.esta_vacia():
+            self.frente = 0
+            self.final = 0
+        else:
+            self.final = (self.final + 1) % self.capacidad
+        self.cola[self.final] = dato
+
+    def desencolar(self):
+        if self.esta_vacia():
+            print("La cola está vacía")
+            return None
+        dato = self.cola[self.frente]
+        if self.frente == self.final:
+            self.frente = -1
+            self.final = -1
+        else:
+            self.frente = (self.frente + 1) % self.capacidad
+        return dato
+
+    def ver_frente(self):
+        if self.esta_vacia():
+            return None
+        return self.cola[self.frente]
+
+    def mostrar(self):
+        if self.esta_vacia():
+            print("Cola vacía")
+            return
+        i = self.frente
+        elementos = []
+        while True:
+            elementos.append(str(self.cola[i]))
+            if i == self.final:
+                break
+            i = (i + 1) % self.capacidad
+        print(" -> ".join(elementos))
+
+cola = colaCircular(5)
+
+cola.encolar("Turno 1")
+cola.encolar("Turno 2")
+cola.encolar("Turno 3")
+cola.encolar("Turno 4")
+cola.encolar("Turno 5")
+
+cola.mostrar()
+
+print("Atendido:", cola.desencolar())
+print("Atendido:", cola.desencolar())
+
+cola.mostrar()
+
+cola.encolar("Turno 6")
+cola.encolar("Turno 7")
+
+cola.mostrar()
+
+print("Atendido:", cola.desencolar())`},
+
+  {id:"colacir", file:"Colas_Circulares.py", name:"Cola circular con tamano",
+   desc:"Cola circular con atributo tamano y operaciones bancarias",
+   viz:"circq2",
+   code:`class ColaCircular:
+    def __init__(self, capacidad: int):
+        self.capacidad = capacidad
+        self.cola = [None] * capacidad
+        self.frente = 0
+        self.final = -1
+        self.tamano = 0
+
+    def enque(self, elemento: int) -> None:
+        if self.tamano == self.capacidad:
+            raise OverflowError("Cola circular llena")
+        self.final = (self.final + 1) % self.capacidad
+        self.cola[self.final] = elemento
+        self.tamano += 1
+
+    def dequeue(self) -> int:
+        if self.tamano == 0:
+            raise IndexError("Cola circular vacía")
+        elemento = self.cola[self.frente]
+        self.cola[self.frente] = None
+        self.frente = (self.frente + 1) % self.capacidad
+        self.tamano -= 1
+        return elemento
+
+    def peek(self) -> int:
+        if self.tamano == 0:
+            raise IndexError("Cola circular vacía")
+        return self.cola[self.frente]
+
+    def is_empty(self) -> bool:
+        return self.tamano == 0
+
+    def size(self) -> int:
+        return self.tamano
+
+    def mostrar(self) -> list:
+        elementos = []
+        idx = self.frente
+        for _ in range(self.tamano):
+            elementos.append(self.cola[idx])
+            idx = (idx + 1) % self.capacidad
+        return elementos
+
+
+def aplicar_retiro(saldos, monto, historial=None):
+    saldo_original = saldos.dequeue()
+    if historial is not None:
+        historial.enque(saldo_original)
+    nuevo_saldo = saldo_original - monto
+    saldos.enque(nuevo_saldo)
+
+def aplicar_deposito(saldos, monto, historial=None):
+    saldo_original = saldos.dequeue()
+    if historial is not None:
+        historial.enque(saldo_original)
+    nuevo_saldo = saldo_original + monto
+    saldos.enque(nuevo_saldo)
+
+
+saldos = ColaCircular(5)
+historial_retiros = ColaCircular(5)
+historial_depositos = ColaCircular(5)
+
+for _ in range(5):
+    saldos.enque(1000)
+
+monto_retiro = 500
+monto_deposito = 300
+
+for _ in range(5):
+    aplicar_retiro(saldos, monto_retiro, historial_retiros)
+
+for _ in range(5):
+    aplicar_deposito(saldos, monto_deposito, historial_depositos)
+
+print("Historial (saldos antes del retiro):", historial_retiros.mostrar())
+print("Historial (saldos antes del depósito):", historial_depositos.mostrar())
+print("Saldos finales:", saldos.mostrar())`},
+
+  {id:"dqmod", file:"deque.py", name:"Deque (módulo collections)",
+   desc:"Cola con deque de Python: operaciones bancarias con historial",
+   viz:"dqmod",
+   code:`from collections import deque
+
+def enque(q: deque, elemento) -> None:
+    q.append(elemento)
+
+def dequeue(q: deque) -> int:
+    return q.popleft()
+
+def peek(q: deque) -> int:
+    return q[0]
+
+def is_empty(q: deque) -> bool:
+    return not q
+
+def size(q: deque) -> int:
+    return len(q)
+
+def aplicar_retiro(saldos, monto, historial=None):
+    saldo_original = dequeue(saldos)
+    if historial is not None:
+        enque(historial, saldo_original)
+    nuevo_saldo = saldo_original - monto
+    enque(saldos, nuevo_saldo)
+
+def aplicar_deposito(saldos, monto, historial=None):
+    saldo_original = dequeue(saldos)
+    if historial is not None:
+        enque(historial, saldo_original)
+    nuevo_saldo = saldo_original + monto
+    enque(saldos, nuevo_saldo)
+
+
+saldos = deque()
+historial_retiros = deque(maxlen=5)
+historial_depositos = deque(maxlen=5)
+
+for _ in range(5):
+    enque(saldos, 1000)
+
+monto_retiro = 500
+monto_deposito = 300
+
+for _ in range(5):
+    aplicar_retiro(saldos, monto_retiro, historial_retiros)
+
+for _ in range(5):
+    aplicar_deposito(saldos, monto_deposito, historial_depositos)
+
+print("Historial (saldos antes del retiro):", list(historial_retiros))
+print("Historial (saldos antes del depósito):", list(historial_depositos))
+print("Saldos finales:", list(saldos))`},
+
+  {id:"ratelim", file:"Rate_Limiting.py", name:"Rate Limiting",
+   desc:"Control de peticiones: máximo 3 por cada 10 segundos con cola de espera",
+   viz:"ratelim",
+   code:`#Supón que la política del sistema permite un máximo de tres peticiones
+#por cada diez segundos. Si un usuario realiza solicitudes en los segundos
+#0, 2, 4, 6 y 12, las tres primeras quedarían dentro del límite permitido.
+#La solicitud del segundo 6 sería conflictiva porque todavía existirían
+#tres peticiones activas dentro de la misma ventana. Posteriormente
+#al llegar al segundo 12, la petición más antigua ya habría salido del
+#intervalo de control, por lo que el sistema podría aceptar una nueva solicitud.
+
+from collections import deque
+
+def rate_limiter(solicitudes, max_peticiones, tiempo):
+    cola_activa = deque(maxlen=max_peticiones)
+    cola_espera = deque()
+    resultados = []
+
+    for i, segundo in enumerate(solicitudes, start=1):
+        while cola_activa and cola_activa[-1][1] <= segundo - tiempo:
+            cola_activa.pop()
+            if cola_espera:
+                pendiente = cola_espera.popleft()
+                cola_activa.appendleft(pendiente)
+                resultados.append(
+                    f"Petición {pendiente[0]} (segundo {pendiente[1]}): "
+                    f"Aceptada desde cola de espera: ventana: {[f'{p[0]}' for p in cola_activa]})"
+                )
+
+        if len(cola_activa) < max_peticiones:
+            cola_activa.appendleft((i, segundo))
+            resultados.append(
+                f"Petición {i} (segundo {segundo}): Aceptada. "
+                f"ventana: {[f'{p[0]}' for p in cola_activa]})"
+            )
+        else:
+            cola_espera.append((i, segundo))
+            resultados.append(
+                f"Petición {i} (segundo {segundo}): En espera"
+            )
+
+    return resultados
+
+
+solicitudes = [0, 2, 4, 6, 12]
+max_peticiones = 3
+tiempo = 10
+
+for linea in rate_limiter(solicitudes, max_peticiones, tiempo):
+    print(linea)`},
+
+  {id:"reintento", file:"Reintento_Tareas.py", name:"Reintento de tareas",
+   desc:"Tareas con fallos se reinsertan al final de la bicola para reintento",
+   viz:"retry",
+   code:`from collections import deque
+
+class Tarea:
+    def __init__(self, nombre, fallos, intentos):
+        self.nombre = nombre
+        self.fallos_pendientes = fallos
+        self.intentos = intentos
+
+    def __repr__(self):
+        return f"{self.nombre}"
+
+bicola = deque([
+    Tarea("T1", 1, 0),
+    Tarea("T2", 0, 0),
+    Tarea("T3", 2, 0),
+    Tarea("T4", 1, 0),
+    Tarea("T5", 2, 2),
+    Tarea("T6", 2, 1)
+])
+
+print(f"Estado inicial de la bicola: {list(bicola)}\n")
+
+while bicola:
+    tarea_actual = bicola.popleft()
+
+    print(f"Procesando {tarea_actual.nombre}")
+
+    if tarea_actual.fallos_pendientes > 0:
+        tarea_actual.fallos_pendientes -= 1
+        tarea_actual.intentos += 1
+        bicola.append(tarea_actual)
+        print(f"Fallo, reintentos: {tarea_actual.intentos} Lo regresamos al final.")
+    else:
+        print(f"{tarea_actual.nombre} Completada, sale de la bicola")
+
+    print(f"  Bicola actual: {list(bicola)}\n")`},
+]},
+
+{name:"Pilas", color:"#fc5c7d", items:[
+  {id:"clasepila", file:"Clase_Pila.py", name:"Clase Pila",
+   desc:"Implementación de pila con push, pop, peek, is_empty y size",
+   viz:"stackv",
+   code:`# Crear una Clase pila con push, pop, peek, is_empty, size
+# Constructores: contengan una lista para la pila, top
+
+class Pila:
+    def __init__(self):
+        self.pila = []
+        self.top = -1
+
+    def push(self, dato):
+        self.pila.append(dato)
+        self.top += 1
+
+    def pop(self):
+        if self.is_empty():
+            return None
+        self.top -= 1
+        return self.pila.pop()
+
+    def peek(self):
+        if self.is_empty():
+            return None
+        return self.pila[self.top]
+
+    def is_empty(self):
+        return self.top == -1
+
+    def size(self):
+        return self.top + 1
+
+pila = Pila()
+pila.push(1)
+pila.push(2)
+pila.push(3)
+
+print("Elemento en la cima:", pila.peek())
+print("Tamaño de la pila:", pila.size())
+print("Pop:", pila.pop())
+print("Tamaño después de pop:", pila.size())
+print("¿Está vacía?", pila.is_empty())`},
+
+  {id:"dulces", file:"Dulces_Pila.py", name:"Dulces en pila",
+   desc:"Inserta dulces ordenados de menor a mayor, la cima queda con el mayor valor",
+   viz:"candystack",
+   code:`#Generar una pila en la que se inserten todos los valores de dulces acomodados
+# de menor (se insertan primero) a mayor (se insertan al final)
+
+class Pila:
+    def __init__(self):
+        self.pila = []
+        self.top = -1
+
+    def push(self, dato):
+        self.pila.append(dato)
+        self.top += 1
+        print(f"Push: {dato} -> Pila actual: {self.pila}")
+
+    def pop(self):
+        if self.is_empty():
+            return None
+        self.top -= 1
+        return self.pila.pop()
+
+    def peek(self):
+        if self.is_empty():
+            return None
+        return self.pila[self.top]
+
+    def is_empty(self):
+        return self.top == -1
+
+    def size(self):
+        return self.top + 1
+
+
+dulces = [12500.5, 11890.0, 13010.35, 14100.0, 13650.8,
+          14999.99, 15800.0, 16250.25, 15120.0, 14780.4,
+          13999.0, 15550.75]
+
+dulces_ordenados = sorted(dulces)
+
+pila = Pila()
+
+for valor in dulces_ordenados:
+    pila.push(valor)
+
+print("\nElemento en la cima:", pila.peek())
+print("Tamaño de la pila:", pila.size())
+print("Pop:", pila.pop())
+print("Tamaño después de pop:", pila.size())
+print("¿Está vacía?", pila.is_empty())`},
+]},
+
+{name:"Árboles", color:"#36d1dc", items:[
+  {id:"abb", file:"Arbol_Binario_B.py", name:"Árbol binario de búsqueda",
+   desc:"Inserta secuencia en ABB respetando propiedad: menores a la izq, mayores a la der",
+   viz:"bst",
+   code:`#Construccion y analisis de un arbol binario de busqueda
+#Dada la secuencia de numeros, se escribe paso a paso
+#como se insertaria cada elemento en un ABB, respetando la propiedad clave:
+#los valores menores al nodo van a la izquierda y los mayores a la derecha.
+# [1,13,11,5,9,10,1,12,3,6]
+# Utilizando un diccionario
+
+import json
+
+class NodoArbol:
+    def __init__(self, clave, valor, izquierdo=None, derecho=None, padre=None):
+        self.clave = clave
+        self.cargaUtil = valor
+        self.hijoIzquierdo = izquierdo
+        self.hijoDerecho = derecho
+        self.padre = padre
+
+    def tieneHijoIzquierdo(self): return self.hijoIzquierdo
+    def tieneHijoDerecho(self): return self.hijoDerecho
+    def esHijoIzquierdo(self): return self.padre and self.padre.hijoIzquierdo == self
+    def esHijoDerecho(self): return self.padre and self.padre.hijoDerecho == self
+    def esRaiz(self): return not self.padre
+    def esHoja(self): return not (self.hijoDerecho or self.hijoIzquierdo)
+    def tieneAlgunHijo(self): return self.hijoDerecho or self.hijoIzquierdo
+    def tieneAmbosHijos(self): return self.hijoDerecho and self.hijoIzquierdo
+
+    def reemplazarDatoDeNodo(self, clave, valor, hizq, hder):
+        self.clave = clave
+        self.cargaUtil = valor
+        self.hijoIzquierdo = hizq
+        self.hijoDerecho = hder
+        if self.tieneHijoIzquierdo(): self.hijoIzquierdo.padre = self
+        if self.tieneHijoDerecho(): self.hijoDerecho.padre = self
+
+def insertar_paso_a_paso(nodo_actual, nueva_clave):
+    if nueva_clave < nodo_actual.clave:
+        if nodo_actual.tieneHijoIzquierdo():
+            insertar_paso_a_paso(nodo_actual.hijoIzquierdo, nueva_clave)
+        else:
+            nodo_actual.hijoIzquierdo = NodoArbol(nueva_clave, f"Valor {nueva_clave}", padre=nodo_actual)
+    elif nueva_clave > nodo_actual.clave:
+        if nodo_actual.tieneHijoDerecho():
+            insertar_paso_a_paso(nodo_actual.hijoDerecho, nueva_clave)
+        else:
+            nodo_actual.hijoDerecho = NodoArbol(nueva_clave, f"Valor {nueva_clave}", padre=nodo_actual)
+
+def generar_diccionario(nodo):
+    if not nodo: return None
+    return {
+        "clave": nodo.clave,
+        "izq": generar_diccionario(nodo.hijoIzquierdo),
+        "der": generar_diccionario(nodo.hijoDerecho)
+    }
+
+def obtener_ordenado(nodo, lista):
+    if nodo:
+        obtener_ordenado(nodo.hijoIzquierdo, lista)
+        lista.append(nodo.clave)
+        obtener_ordenado(nodo.hijoDerecho, lista)
+
+lista_entrada = [1, 13, 11, 5, 9, 10, 1, 12, 3, 6]
+raiz = NodoArbol(lista_entrada[0], f"Valor {lista_entrada[0]}")
+
+for elemento in lista_entrada[1:]:
+    insertar_paso_a_paso(raiz, elemento)
+
+print(f"Lista Original: {lista_entrada}")
+print("\nDiccionario del Árbol:")
+print(json.dumps(generar_diccionario(raiz), indent=4))
+
+lista_final = []
+obtener_ordenado(raiz, lista_final)
+print(f"\nLista Final, Ordenada y sin repetidos: {lista_final}")`},
+
+  {id:"recorridos", file:"Eje_AborlesBin.py", name:"Recorridos de árbol",
+   desc:"Preorden, inorden y postorden en árbol binario con elementos [3,1,4,2,5]",
+   viz:"traversal",
+   code:`#En lugar de usar un solo dato vas a recibir toda la lista
+#Nuestra raiz debe ser 3, la funcion lee el valor y lo compara con la raiz
+#En lugar de un solo dato, vamos a recibir una lista y cada elemento debe
+#pasar por un pase de comparacion dentro de un bucle.
+#Los elementos menores a la raiz van a la izquierda y los mayores a la derecha.
+
+class Nodo:
+    def __init__(self, dato):
+        self.dato = dato
+        self.izquierda = None
+        self.derecha = None
+
+    def agregar(self, lista_elementos):
+        for dato in lista_elementos:
+            self.__agregar_recursivo(self, dato)
+
+    def __agregar_recursivo(self, nodo, dato):
+        if dato == nodo.dato:
+            return
+        if dato < nodo.dato:
+            if nodo.izquierda is None:
+                nodo.izquierda = Nodo(dato)
+            else:
+                self.__agregar_recursivo(nodo.izquierda, dato)
+        else:
+            if nodo.derecha is None:
+                nodo.derecha = Nodo(dato)
+            else:
+                self.__agregar_recursivo(nodo.derecha, dato)
+
+def preorden(nodo):
+    if nodo:
+        print(nodo.dato, end=", ")
+        if nodo.izquierda is None and nodo.derecha is not None:
+            print("None", end=", ")
+        preorden(nodo.izquierda)
+        preorden(nodo.derecha)
+
+def inorden(nodo):
+    if nodo:
+        inorden(nodo.izquierda)
+        print(nodo.dato, end=", ")
+        if nodo.dato == 3 and nodo.derecha:
+            print("None", end=", ")
+        inorden(nodo.derecha)
+
+def postorden(nodo):
+    if nodo:
+        if nodo.izquierda is None and nodo.derecha is not None:
+            print("None", end=", ")
+        postorden(nodo.izquierda)
+        postorden(nodo.derecha)
+        print(nodo.dato, end=", ")
+
+elementos = [3, 1, 4, 2, 5]
+raiz = Nodo(elementos[0])
+raiz.agregar(elementos)
+
+print("Preorden: ", end=""); preorden(raiz)
+print("\nInorden:  ", end=""); inorden(raiz)
+print("\nPostorden:", end=""); postorden(raiz)`},
+]},
+
+{name:"Grafos", color:"#3ecf8e", items:[
+  {id:"bfs", file:"Grafo.py", name:"BFS — Búsqueda en anchura",
+   desc:"Recorre el grafo por niveles, mostrando cola y visitados en cada paso",
+   viz:"bfsv",
+   code:`from collections import deque
+
+def bfs(grafo, nodo_inicial):
+    visitados = []
+    cola = deque([])
+
+    print(f"\nEstado inicial{list(cola)}, Visitados: {visitados}\n")
+
+    cola.append(nodo_inicial)
+    visitados.append(nodo_inicial)
+    print(f"Se agrega el nodo de origen '{nodo_inicial}' a la cola.")
+    print(f"Cola: {list(cola)}, Visitados: {visitados}\n")
+
+    while cola:
+        nodo_actual = cola.popleft()
+        print(f"Nodo procesado {nodo_actual}")
+
+        agregados = []
+        for vecino in grafo[nodo_actual]:
+            if vecino not in visitados:
+                visitados.append(vecino)
+                cola.append(vecino)
+                agregados.append(vecino)
+
+        if agregados:
+            print(f"Agregados a la cola: {agregados}")
+
+        print(f"Estado de la Cola: {list(cola)}")
+        print(f"Lista de Visitados: {visitados}\n")
+
+grafo = {
+    'A': ['B', 'C'],
+    'B': ['D', 'E'],
+    'C': ['F', 'G'],
+    'D': [],
+    'E': [],
+    'F': [],
+    'G': []
+}
+
+bfs(grafo, 'A')`},
+
+  {id:"dijkstra", file:"Grafos2.py", name:"Dijkstra — Caminos mínimos",
+   desc:"Encuentra la ruta más corta desde nodo 0 a todos los demás nodos",
+   viz:"dijkv",
+   code:`# Implementacion del algoritmo Dijkstra
+# Implementacion de la generacion de una tabla
+
+import heapq
+
+def dijkstra(grafo, inicio):
+    distancias = {nodo: float('inf') for nodo in grafo}
+    distancias[inicio] = 0
+    previos = {nodo: None for nodo in grafo}
+
+    cola_prioridad = [(0, inicio)]
+
+    while cola_prioridad:
+        distancia_actual, nodo_actual = heapq.heappop(cola_prioridad)
+
+        if distancia_actual > distancias[nodo_actual]:
+            continue
+
+        for vecino, peso in grafo[nodo_actual].items():
+            distancia = distancia_actual + peso
+
+            if distancia < distancias[vecino]:
+                distancias[vecino] = distancia
+                previos[vecino] = nodo_actual
+                heapq.heappush(cola_prioridad, (distancia, vecino))
+
+    return distancias, previos
+
+
+grafo = {
+    0: {1: 9, 4: 6},
+    1: {0: 9, 3: 8},
+    2: {4: 5, 5: 6},
+    3: {1: 8, 5: 1, 7: 7},
+    4: {0: 6, 2: 5, 6: 3},
+    5: {2: 6, 3: 1},
+    6: {4: 3, 7: 2},
+    7: {3: 7, 6: 2}
+}
+
+distancias, previos = dijkstra(grafo, 0)
+
+print(f"{'Vertex':<8} | {'Cost':<6} | {'Path'}")
+print("-" * 25)
+for nodo in sorted(distancias.keys()):
+    camino = []
+    actual = nodo
+    while actual is not None:
+        camino.append(str(actual))
+        actual = previos[actual]
+    camino_str = " ".join(reversed(camino))
+    print(f"{nodo:<8} | {distancias[nodo]:<6} | {camino_str}")`},
+
+  {id:"prim", file:"Algoritmo_prim.py", name:"Algoritmo de Prim",
+   desc:"Árbol de expansión mínima desde nodo '2' usando cola de prioridad",
+   viz:"primv",
+   code:`import heapq
+
+def algoritmo_prim(grafo, inicio):
+    mst = []
+    visitados = set()
+    cola_prioridad = [(0, None, inicio)]
+    peso_total = 0
+
+    print(f" Iniciando Prim desde el nodo {inicio}")
+
+    while cola_prioridad:
+        peso, u, v = heapq.heappop(cola_prioridad)
+
+        if v not in visitados:
+            visitados.add(v)
+            peso_total += peso
+
+            if u is not None:
+                mst.append((u, v, peso))
+                print(f"Conectando: {u} - {v} con peso {peso}")
+
+            for vecino, peso_arista in grafo[v].items():
+                if vecino not in visitados:
+                    heapq.heappush(cola_prioridad, (peso_arista, v, vecino))
+
+    return mst, peso_total
+
+
+grafo_imagen = {
+    '0': {'2': 20, '1': 10},
+    '1': {'0': 10, '4': 10, '3': 50},
+    '2': {'0': 20, '4': 33, '3': 20},
+    '3': {'1': 50, '2': 20, '4': 20, '5': 2},
+    '4': {'2': 33, '1': 10, '3': 20, '5': 1},
+    '5': {'4': 1, '3': 2}
+}
+
+nodo_inicial = '2'
+resultado_mst, total = algoritmo_prim(grafo_imagen, nodo_inicial)
+
+print("Árbol de expansion")
+for origen, destino, peso in resultado_mst:
+    print(f"Arista: {origen} - {destino} | Peso: {peso}")
+
+print(f"Peso total: {total}")`},
+]},
+
+{name:"Ordenamiento", color:"#f5a623", items:[
+  {id:"bubble", file:"BubbleSort.py", name:"Bubble Sort",
+   desc:"Compara pares adyacentes e intercambia si están en orden incorrecto, pasada a pasada",
+   viz:"sort_bubble",
+   code:`listaN = [10, 50, 23, 3, 43, 23, 29, 49, 12, 40]
+
+def bubbleSort(lista):
+    n = len(lista)
+    for i in range(n):
+        intercambio = False
+        for j in range(0, n - i - 1):
+            if lista[j] > lista[j+1]:
+                lista[j], lista[j+1] = lista[j+1], lista[j]
+                intercambio = True
+        if not intercambio:
+            break
+    return lista
+
+resultado = bubbleSort(listaN)
+print("Lista ordenada con Bubble Sort:", resultado)`},
+
+  {id:"selection", file:"SelectionSort.py", name:"Selection Sort",
+   desc:"Busca el mínimo en cada pasada y lo coloca en su posición definitiva",
+   viz:"sort_selection",
+   code:`listaN = [10, 50, 23, 3, 43, 23, 29, 49, 12, 40]
+
+def selectionSort(listaN):
+    n = len(listaN)
+    for i in range(n):
+        min_index = i
+        for j in range(i + 1, n):
+            if listaN[j] < listaN[min_index]:
+                min_index = j
+        listaN[i], listaN[min_index] = listaN[min_index], listaN[i]
+    return listaN
+
+resultado = selectionSort(listaN)
+print("Lista ordenada con Selection Sort:", resultado)`},
+
+  {id:"insertion", file:"InsertionSort.py", name:"Insertion Sort",
+   desc:"Inserta cada elemento en su posición correcta dentro de la parte ya ordenada",
+   viz:"sort_insertion",
+   code:`listaN = [10, 50, 23, 3, 43, 23, 29, 49, 12, 40]
+
+def insertionSort(listaN):
+    n = len(listaN)
+    for i in range(1, n):
+        valor_actual = listaN[i]
+        j = i - 1
+        while j >= 0 and valor_actual < listaN[j]:
+            listaN[j + 1] = listaN[j]
+            j -= 1
+        listaN[j + 1] = valor_actual
+    return listaN
+
+resultado = insertionSort(listaN)
+print("Lista ordenada con Insertion Sort:", resultado)`},
+
+  {id:"merge", file:"MergeSort.py", name:"Merge Sort",
+   desc:"Divide la lista a la mitad recursivamente y las combina en orden (divide y vencerás)",
+   viz:"sort_merge",
+   code:`listaN = [10, 50, 23, 3, 43, 23, 29, 49, 12, 40]
+
+def mergeSort(listaN):
+    if len(listaN) > 1:
+        medio = len(listaN) // 2
+        izquierda = listaN[:medio]
+        derecha = listaN[medio:]
+        mergeSort(izquierda)
+        mergeSort(derecha)
+        i = j = k = 0
+        while i < len(izquierda) and j < len(derecha):
+            if izquierda[i] < derecha[j]:
+                listaN[k] = izquierda[i]
+                i += 1
+            else:
+                listaN[k] = derecha[j]
+                j += 1
+            k += 1
+        while i < len(izquierda):
+            listaN[k] = izquierda[i]
+            i += 1
+            k += 1
+        while j < len(derecha):
+            listaN[k] = derecha[j]
+            j += 1
+            k += 1
+    return listaN
+
+mergeSort(listaN)
+print("Lista ordenada con Merge Sort:", listaN)`},
+
+  {id:"quick", file:"QuickSort.py", name:"Quick Sort",
+   desc:"Elige un pivote central y particiona la lista en menores, iguales y mayores, recursivamente",
+   viz:"sort_quick",
+   code:`listaN = [10, 50, 23, 3, 43, 23, 29, 49, 12, 40]
+
+def quickSort(listaN):
+    if len(listaN) <= 1:
+        return listaN
+    pivote = listaN[len(listaN) // 2]
+    izquierda = [x for x in listaN if x < pivote]
+    centro    = [x for x in listaN if x == pivote]
+    derecha   = [x for x in listaN if x > pivote]
+    return quickSort(izquierda) + centro + quickSort(derecha)
+
+resultado = quickSort(listaN)
+print("Lista ordenada con Quick Sort:", resultado)`},
+
+  {id:"rquick", file:"RandomQuickSort.py", name:"Random Quick Sort",
+   desc:"Igual que Quick Sort pero el pivote se elige al azar para evitar el peor caso",
+   viz:"sort_rquick",
+   code:`import random
+
+listaN = [10, 50, 23, 3, 43, 23, 29, 49, 12, 40]
+
+def randomQuickSort(listaN):
+    if len(listaN) <= 1:
+        return listaN
+    pivote    = random.choice(listaN)
+    izquierda = [x for x in listaN if x < pivote]
+    centro    = [x for x in listaN if x == pivote]
+    derecha   = [x for x in listaN if x > pivote]
+    return randomQuickSort(izquierda) + centro + randomQuickSort(derecha)
+
+resultado = randomQuickSort(listaN)
+print("Lista ordenada con Random Quick Sort:", resultado)`},
+
+  {id:"counting", file:"CountingSort.py", name:"Counting Sort",
+   desc:"Cuenta las ocurrencias de cada valor y reconstruye la lista ordenada sin comparaciones",
+   viz:"sort_counting",
+   code:`listaN = [10, 50, 23, 3, 43, 23, 29, 49, 12, 40]
+
+def countingSort(listaN):
+    if not listaN:
+        return []
+    max_value = max(listaN)
+    count  = [0] * (max_value + 1)
+    output = [0] * len(listaN)
+    for num in listaN:
+        count[num] += 1
+    for i in range(1, max_value + 1):
+        count[i] += count[i - 1]
+    for num in listaN:
+        output[count[num] - 1] = num
+        count[num] -= 1
+    return output
+
+resultado = countingSort(listaN)
+print("Lista ordenada con Counting Sort:", resultado)`},
+]},
+
+
+{name:"Recursión", color:"#c792ea", items:[
+  {id:"hanoi", file:"torres_de_hanoi.py", name:"Torres de Hanoi",
+   desc:"Solución recursiva: mueve N discos de la varilla A a C usando B como auxiliar",
+   viz:"hanoi",
+   code:`def hanoi(n, origen, destino, auxiliar):
+    if n > 0:
+        hanoi(n - 1, origen, auxiliar, destino)
+
+        print(f"Disco {n} de {origen} a {destino}\n")
+
+        hanoi(n - 1, auxiliar, destino, origen)
+
+numero_de_discos = 5
+hanoi(numero_de_discos, 'A', 'C', 'B')`},
+]},
+];
+
+//  STATE
+let current = null;
+let steps = [], stepIdx = 0, timer = null;
+let mode = 'both';
+
+//  NAV BUILD
+const navEl = document.getElementById('nav');
+CATS.forEach(cat => {
+  const h = document.createElement('div');
+  h.className = 'cat'; h.textContent = cat.name; navEl.appendChild(h);
+  cat.items.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'item';
+    el.innerHTML = `<span class="dot" style="background:${cat.color}"></span>${item.name}`;
+    el.dataset.id = item.id;
+    el.onclick = () => select(item, cat.color, cat.name);
+    navEl.appendChild(el);
+  });
+});
+
+//  SELECT
+function select(item, color, catName) {
+  current = item;
+  stopAnim();
+  document.querySelectorAll('.item').forEach(el => el.classList.toggle('on', el.dataset.id === item.id));
+  document.getElementById('pname').textContent = item.name;
+  document.getElementById('filename').textContent = item.file;
+  const b = document.getElementById('pbadge');
+  b.textContent = catName;
+  b.style.cssText = `background:${color}22;color:${color};border:1px solid ${color}44`;
+  document.getElementById('vdesc').textContent = item.desc;
+  document.getElementById('codedisp').innerHTML = highlight(item.code);
+  buildSteps();
+  stepIdx = 0;
+  drawStep();
+}
+
+//  SYNTAX HIGHLIGHT
+function highlight(code) {
+  return code
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/(#[^\n]*)/g,'<span class="cm">$1</span>')
+    .replace(/\b(def|class|return|if|else|elif|for|while|in|not|and|or|import|from|True|False|None|self|lambda|pass|break|continue|raise|try|except|with|as|yield|del|global|nonlocal)\b/g,'<span class="kw">$1</span>')
+    .replace(/\b(print|range|len|sum|max|min|sorted|list|dict|set|tuple|str|int|float|bool|append|pop|insert|remove|heappush|heappop|enumerate|zip|map|filter|reversed|open|type|isinstance|hasattr|getattr|vars|dir)\b/g,'<span class="fn">$1</span>')
+    .replace(/("""[\s\S]*?"""|'''[\s\S]*?'''|f?"[^"]*"|f?'[^']*')/g,'<span class="st">$1</span>')
+    .replace(/\b(\d+\.?\d*)\b/g,'<span class="nm">$1</span>');
+}
+
+function doCopy() {
+  if (!current) return;
+  navigator.clipboard.writeText(current.code).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copiado!';
+    setTimeout(() => btn.textContent = 'Copiar', 1600);
+  });
+}
+
+//  PANEL MODE
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.tb').forEach((b,i) => b.classList.toggle('on', ['both','viz','code'][i] === m));
+  const vz = document.getElementById('viz');
+  const cp = document.getElementById('codepanel');
+  vz.style.display = m === 'code' ? 'none' : 'flex';
+  cp.style.display = m === 'viz'  ? 'none' : 'flex';
+  setTimeout(resizeCv, 30);
+}
+
+//  CANVAS
+const cv = document.getElementById('cv');
+const cx = cv.getContext('2d');
+
+function resizeCv() {
+  const w = document.getElementById('cvwrap');
+  cv.width = w.clientWidth; cv.height = w.clientHeight;
+  if (current) drawStep();
+}
+window.addEventListener('resize', resizeCv);
+setTimeout(resizeCv, 80);
+
+function setInfo(t) { document.getElementById('info').textContent = t; }
+
+function doReset() { stopAnim(); buildSteps(); stepIdx = 0; drawStep(); }
+function doPlay()  { stopAnim(); buildSteps(); stepIdx = 0; runAnim(); }
+function stopAnim() { if (timer) clearTimeout(timer); timer = null; }
+
+function runAnim() {
+  if (stepIdx >= steps.length) { setInfo('✓ Animación completada'); return; }
+  drawStep(); stepIdx++;
+  const ms = (6 - parseInt(document.getElementById('speed').value)) * 160;
+  timer = setTimeout(runAnim, ms);
+}
+
+function drawStep() {
+  if (!steps.length) return;
+  const s = steps[Math.min(stepIdx, steps.length - 1)];
+  cx.clearRect(0, 0, cv.width, cv.height);
+  s.draw(cx, cv.width, cv.height);
+  setInfo(s.label);
+}
+
+//  VIZ BUILDERS
+
+function buildSteps() {
+  steps = [];
+  if (!current) return;
+  const v = current.viz;
+  const W = cv.width, H = cv.height;
+
+  // ── HELPERS 
+  const C = { accent:'#5a67f2', green:'#2da882', red:'#e05c4a', orange:'#d97a1a',
+               cyan:'#0a8fba', text:'#333', muted:'#999', surf:'#eef0f8', border:'#ccd0e0' };
+
+  function txt(c, t, x, y, opts={}) {
+    c.save();
+    c.fillStyle = opts.color||C.text;
+    c.font = `${opts.bold?'bold ':''} ${opts.size||13}px ${opts.mono?'JetBrains Mono':'Outfit'},monospace`;
+    c.textAlign = opts.align||'center';
+    c.textBaseline = opts.base||'middle';
+    c.fillText(t, x, y);
+    c.restore();
+  }
+
+  function bar(c, x, y, w, h, color, stroke) {
+    c.fillStyle = color; c.beginPath(); c.roundRect(x, y, w, h, 4); c.fill();
+    if (stroke) { c.strokeStyle = stroke; c.lineWidth = 2; c.stroke(); }
+  }
+
+  function cell(c, x, y, w, h, fill, stroke, lw=1) {
+    c.fillStyle = fill; c.strokeStyle = stroke; c.lineWidth = lw;
+    c.beginPath(); c.roundRect(x, y, w, h, 5); c.fill(); c.stroke();
+  }
+
+  function circle(c, x, y, r, fill, stroke, lw=1.5) {
+    c.beginPath(); c.arc(x, y, r, 0, Math.PI*2);
+    c.fillStyle = fill; c.strokeStyle = stroke; c.lineWidth = lw; c.fill(); c.stroke();
+  }
+
+  function line(c, x1, y1, x2, y2, color, lw=1.5) {
+    c.beginPath(); c.moveTo(x1,y1); c.lineTo(x2,y2);
+    c.strokeStyle = color; c.lineWidth = lw; c.stroke();
+  }
+
+  // ── BARS (sorting) 
+  const SA = [10,50,23,3,43,23,29,49,12,40];
+
+  function barFrame(arr, hl, label) {
+    return { label, draw(c,W,H) {
+      const n=arr.length, pad=36, bw=Math.floor((W-pad*2)/n)-4, maxV=Math.max(...arr), bh=H-100;
+      arr.forEach((v,i) => {
+        const h=Math.round((v/maxV)*bh), x=pad+i*(bw+4), y=H-54-h;
+        const t=hl[i]||'def';
+        c.fillStyle = t==='cmp'?C.red+'44':t==='sw'?C.accent+'44':t==='done'?C.green+'33':C.surf;
+        c.strokeStyle = t==='cmp'?C.red:t==='sw'?C.accent:t==='done'?C.green:C.border;
+        c.lineWidth = t!=='def'?2:1;
+        c.beginPath(); c.roundRect(x,y,bw,h,3); c.fill(); c.stroke();
+        txt(c, v, x+bw/2, H-36, {size:11,mono:true,color:C.text});
+      });
+    }};
+  }
+
+  // ── BUBBLE SORT 
+  if (v === 'sort_bubble') {
+    let a=[...SA];
+    steps.push(barFrame([...a],{},'Bubble Sort — Estado inicial'));
+    const n=a.length;
+    for(let i=0;i<n;i++) for(let j=0;j<n-i-1;j++) {
+      const hl={}; hl[j]='cmp'; hl[j+1]='cmp';
+      for(let k=n-i;k<n;k++) hl[k]='done';
+      steps.push(barFrame([...a],hl,`Bubble: comparando ${a[j]} y ${a[j+1]}`));
+      if(a[j]>a[j+1]){ [a[j],a[j+1]]=[a[j+1],a[j]]; const h2={}; h2[j]='sw'; h2[j+1]='sw'; for(let k=n-i;k<n;k++) h2[k]='done'; steps.push(barFrame([...a],h2,`Swap → ${a[j]} ↔ ${a[j+1]}`)); }
+    }
+    const fin={}; for(let k=0;k<n;k++) fin[k]='done';
+    steps.push(barFrame([...a],fin,'✓ Ordenado (Bubble Sort)'));
+    return;
+  }
+
+  // ── SELECTION SORT 
+  if (v === 'sort_selection') {
+    let a=[...SA]; const n=a.length;
+    steps.push(barFrame([...a],{},'Selection Sort — Estado inicial'));
+    for(let i=0;i<n;i++) {
+      let minIdx=i;
+      for(let j=i+1;j<n;j++) {
+        const hl={}; hl[minIdx]='cmp'; hl[j]='cmp';
+        for(let k=0;k<i;k++) hl[k]='done';
+        steps.push(barFrame([...a],hl,`Selection: buscando mínimo — comparando ${a[j]} con mín actual ${a[minIdx]}`));
+        if(a[j]<a[minIdx]) minIdx=j;
+      }
+      if(minIdx!==i){ [a[i],a[minIdx]]=[a[minIdx],a[i]]; }
+      const hl2={}; for(let k=0;k<=i;k++) hl2[k]='done';
+      steps.push(barFrame([...a],hl2,`Selection: mínimo ${a[i]} colocado en posición ${i}`));
+    }
+    const fin={}; for(let k=0;k<n;k++) fin[k]='done';
+    steps.push(barFrame([...a],fin,'✓ Ordenado (Selection Sort)'));
+    return;
+  }
+
+  // ── INSERTION SORT 
+  if (v === 'sort_insertion') {
+    let a=[...SA]; const n=a.length;
+    steps.push(barFrame([...a],{},'Insertion Sort — Estado inicial'));
+    for(let i=1;i<n;i++) {
+      const val=a[i]; let j=i-1;
+      const hl={}; hl[i]='cmp'; for(let k=0;k<i;k++) hl[k]='done';
+      steps.push(barFrame([...a],hl,`Insertion: insertando ${val}`));
+      while(j>=0 && val<a[j]){ a[j+1]=a[j]; j--; }
+      a[j+1]=val;
+      const hl2={}; for(let k=0;k<=i;k++) hl2[k]='done';
+      steps.push(barFrame([...a],hl2,`Insertion: ${val} insertado en posición ${j+1}`));
+    }
+    const fin={}; for(let k=0;k<n;k++) fin[k]='done';
+    steps.push(barFrame([...a],fin,'✓ Ordenado (Insertion Sort)'));
+    return;
+  }
+
+  // ── MERGE SORT 
+  if (v === 'sort_merge') {
+    let a=[...SA];
+    steps.push(barFrame([...a],{},'Merge Sort — Estado inicial'));
+    function mergeSortViz(arr, lo, hi) {
+      if(hi-lo<=0) return;
+      const mid=Math.floor((lo+hi)/2);
+      mergeSortViz(arr,lo,mid);
+      mergeSortViz(arr,mid+1,hi);
+      const L=arr.slice(lo,mid+1), R=arr.slice(mid+1,hi+1);
+      let i=0,j=0,k=lo;
+      while(i<L.length&&j<R.length){
+        const hl={}; hl[lo+i]='cmp'; hl[mid+1+j]='cmp';
+        steps.push(barFrame([...arr],hl,`Merge: comparando ${L[i]} y ${R[j]}`));
+        if(L[i]<=R[j]){ arr[k++]=L[i++]; } else { arr[k++]=R[j++]; }
+        const hl2={}; arr.forEach((_,x)=>{ if(x>=lo&&x<k) hl2[x]='sw'; });
+        steps.push(barFrame([...arr],hl2,`Merge: colocando ${arr[k-1]}`));
+      }
+      while(i<L.length){ arr[k++]=L[i++]; }
+      while(j<R.length){ arr[k++]=R[j++]; }
+    }
+    mergeSortViz(a,0,a.length-1);
+    const fin={}; for(let k=0;k<a.length;k++) fin[k]='done';
+    steps.push(barFrame([...a],fin,'✓ Ordenado (Merge Sort)'));
+    return;
+  }
+
+  // ── QUICK SORT 
+  if (v === 'sort_quick') {
+    let a=[...SA];
+    steps.push(barFrame([...a],{},'Quick Sort — Estado inicial'));
+    function quickSortViz(arr, lo, hi) {
+      if(lo>=hi) return;
+      const pivotIdx=Math.floor((lo+hi)/2), pivotVal=arr[pivotIdx];
+      const hl={}; hl[pivotIdx]='sw';
+      steps.push(barFrame([...arr],hl,`Quick: pivote = ${pivotVal} (pos ${pivotIdx})`));
+      let i=lo, j=hi;
+      while(i<=j){
+        while(arr[i]<pivotVal) i++;
+        while(arr[j]>pivotVal) j--;
+        if(i<=j){
+          if(i!==j){ const h={}; h[i]='cmp'; h[j]='cmp'; steps.push(barFrame([...arr],h,`Quick: swap ${arr[i]} ↔ ${arr[j]}`)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+          i++; j--;
+        }
+      }
+      quickSortViz(arr,lo,j);
+      quickSortViz(arr,i,hi);
+    }
+    quickSortViz(a,0,a.length-1);
+    const fin={}; for(let k=0;k<a.length;k++) fin[k]='done';
+    steps.push(barFrame([...a],fin,'✓ Ordenado (Quick Sort)'));
+    return;
+  }
+
+  // ── RANDOM QUICK SORT 
+  if (v === 'sort_rquick') {
+    let a=[...SA];
+    steps.push(barFrame([...a],{},'Random Quick Sort — Estado inicial'));
+    function rquickSortViz(arr, lo, hi) {
+      if(lo>=hi) return;
+      const pivotIdx=lo+Math.floor(Math.random()*(hi-lo+1)), pivotVal=arr[pivotIdx];
+      const hl={}; hl[pivotIdx]='sw';
+      steps.push(barFrame([...arr],hl,`RandQuick: pivote aleatorio = ${pivotVal} (pos ${pivotIdx})`));
+      let i=lo, j=hi;
+      while(i<=j){
+        while(arr[i]<pivotVal) i++;
+        while(arr[j]>pivotVal) j--;
+        if(i<=j){
+          if(i!==j){ const h={}; h[i]='cmp'; h[j]='cmp'; steps.push(barFrame([...arr],h,`RandQuick: swap ${arr[i]} ↔ ${arr[j]}`)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+          i++; j--;
+        }
+      }
+      rquickSortViz(arr,lo,j);
+      rquickSortViz(arr,i,hi);
+    }
+    rquickSortViz(a,0,a.length-1);
+    const fin={}; for(let k=0;k<a.length;k++) fin[k]='done';
+    steps.push(barFrame([...a],fin,'✓ Ordenado (Random Quick Sort)'));
+    return;
+  }
+
+  // ── COUNTING SORT 
+  if (v === 'sort_counting') {
+    let a=[...SA];
+    steps.push(barFrame([...a],{},'Counting Sort — Estado inicial'));
+    const maxV=Math.max(...a), count=new Array(maxV+1).fill(0);
+    a.forEach(n=>count[n]++);
+    steps.push(barFrame([...a],{},'Counting: conteo de frecuencias completado'));
+    for(let i=1;i<=maxV;i++) count[i]+=count[i-1];
+    const output=new Array(a.length).fill(0);
+    for(let i=a.length-1;i>=0;i--){
+      output[count[a[i]]-1]=a[i]; count[a[i]]--;
+      const hl={}; hl[count[a[i]]]='sw';
+      steps.push(barFrame([...output],hl,`Counting: colocando ${a[i]}`));
+    }
+    const fin={}; for(let k=0;k<output.length;k++) fin[k]='done';
+    steps.push(barFrame([...output],fin,'✓ Ordenado (Counting Sort)'));
+    return;
+  }
+
+  // ── DEDUP 
+  if (v === 'dedup') {
+    const x=[1,2,4,4,5,7,9,10,11,11,13,14,15,16,16], y=[];
+    function frame(seen, cur, label) {
+      return { label, draw(c,W,H) {
+        const bw=34, gap=2, sx=W/2-(x.length*(bw+gap))/2, y1=H*0.3, y2=H*0.65;
+        txt(c,'Arreglo original:',sx,y1-20,{align:'left',color:C.muted,size:11});
+        x.forEach((v,i) => {
+          const px=sx+i*(bw+gap), dup=x.indexOf(v)<i;
+          cell(c,px,y1,bw,32, i===cur?C.accent+'44':dup?C.red+'22':C.surf, i===cur?C.accent:dup?C.red:C.border, i===cur?2:1);
+          txt(c,v,px+bw/2,y1+16,{size:12,mono:true});
+        });
+        txt(c,'Sin repetidos:',sx,y2-20,{align:'left',color:C.muted,size:11});
+        seen.forEach((v,i) => {
+          const px=sx+i*(bw+gap);
+          cell(c,px,y2,bw,32,C.green+'22',C.green,1.5);
+          txt(c,v,px+bw/2,y2+16,{size:12,mono:true,color:C.green});
+        });
+      }};
+    }
+    steps.push(frame([],null,'Arreglo original con duplicados'));
+    x.forEach((v,i) => { const dup=y.includes(v); if(!dup)y.push(v); steps.push(frame([...y],i,dup?`${v} ya existe — ignorado`:`${v} agregado`)); });
+    return;
+  }
+
+  // ── FREQ 
+  if (v === 'freq') {
+    const cadena='Parangaricutirimicuaro', freq={};
+    [...cadena.toLowerCase()].forEach(l => { if(/[a-z]/.test(l)) freq[l]=(freq[l]||0)+1; });
+    const ent=Object.entries(freq).sort((a,b)=>b[1]-a[1]), maxF=ent[0][1];
+    function freqFrame(done, label) {
+      return { label, draw(c,W,H) {
+        const pad=40, n=ent.length, bw=Math.floor((W-pad*2)/n)-2, maxH=H-110;
+        txt(c,`"${cadena}"`,W/2,22,{size:12,mono:true,color:C.muted});
+        ent.forEach(([l,f],i) => {
+          const x=pad+i*(bw+2), h=Math.round((f/maxF)*maxH*0.75), y=H-60-h;
+          const on=done.includes(l);
+          c.fillStyle=on?C.accent+'44':C.surf; c.strokeStyle=on?C.accent:C.border; c.lineWidth=on?2:1;
+          c.beginPath(); c.roundRect(x,y,bw,h,3); c.fill(); c.stroke();
+          txt(c,l,x+bw/2,H-42,{size:Math.max(9,bw-1),mono:true,color:on?C.accent:C.muted});
+          if(on) txt(c,f,x+bw/2,y-10,{size:10,mono:true,color:C.accent});
+        });
+      }};
+    }
+    const done=[];
+    steps.push(freqFrame([],'Contando frecuencias de letras...'));
+    ent.forEach(([l]) => { done.push(l); steps.push(freqFrame([...done],`'${l}' → ${freq[l]} aparición(es)`)); });
+    return;
+  }
+
+  // ── GRADES 
+  if (v === 'grades') {
+    const cal=[8,8,7,5,0,9,9,5,6,10]; cal.sort((a,b)=>a-b);
+    const prom=cal.reduce((a,b)=>a+b,0)/cal.length;
+    function gFrame(hl, showAvg, label) {
+      return { label, draw(c,W,H) {
+        const bw=52, gap=6, sx=W/2-(cal.length*(bw+gap))/2, y=H/2-50;
+        if(showAvg) { const ly=y+120-Math.round((prom/10)*120); c.setLineDash([5,4]); line(c,sx-10,ly,sx+cal.length*(bw+gap)+10,ly,C.orange,1.5); c.setLineDash([]); txt(c,`prom=${prom.toFixed(1)}`,sx+cal.length*(bw+gap)+16,ly,{size:9,mono:true,align:'left',color:C.orange}); }
+        cal.forEach((v,i) => {
+          const bh=Math.round((v/10)*120), x=sx+i*(bw+gap), by=y+120-bh;
+          const t=hl[i];
+          cell(c,x,by,bw,bh, t==='ok'?C.green+'33':t==='no'?C.red+'33':C.surf, t==='ok'?C.green:t==='no'?C.red:C.border, t?2:1);
+          txt(c,v,x+bw/2,by-12,{size:14,bold:true,color:C.text});
+        });
+      }};
+    }
+    steps.push(gFrame({},'','Calificaciones del grupo (ordenadas)'));
+    cal.forEach((_,i) => { const hl={}; cal.forEach((v,j)=>{if(j<=i)hl[j]=v>=7?'ok':'no';}); steps.push(gFrame(hl,true,`${cal[i]>=7?'✓ Aprobado':'✗ Reprobado'}: ${cal[i]}`)); });
+    return;
+  }
+
+  // ── HARVEST 
+  if (v === 'harvest') {
+    const t=[12,24,16,15,20,18,6,10,12,11,14,15,12]; t.sort((a,b)=>a-b);
+    const prom=t.reduce((a,b)=>a+b,0)/t.length, maxV=Math.max(...t);
+    steps.push({ label:'Cosecha de cereales ordenada y promedio', draw(c,W,H) {
+      const pad=36, bw=Math.floor((W-pad*2)/t.length)-3, maxH=H-100;
+      const ly=H-54-Math.round((prom/maxV)*maxH);
+      c.setLineDash([5,4]); line(c,pad,ly,W-pad,ly,C.orange,1.5); c.setLineDash([]);
+      txt(c,`Prom: ${prom.toFixed(1)}t`,W-pad+4,ly,{size:9,mono:true,align:'left',color:C.orange});
+      t.forEach((v,i) => {
+        const h=Math.round((v/maxV)*maxH), x=pad+i*(bw+3), y=H-54-h;
+        const over=v>prom;
+        cell(c,x,y,bw,h, over?C.green+'33':C.red+'33', over?C.green:C.red, 1.5);
+        txt(c,v,x+bw/2,y-10,{size:9,mono:true,color:over?C.green:C.red});
+      });
+      txt(c,'Verde = sobre promedio  |  Rojo = bajo promedio',W/2,H-16,{size:10,color:C.muted});
+    }});
+    return;
+  }
+
+  // ── MATRIX SEARCH 
+  if (v === 'msearch') {
+    const A=[[4,7,2,9,5,7],[1,3,7,6,8,0],[9,2,5,7,4,6],[8,7,1,3,7,2],[5,0,6,4,2,9],[7,8,9,2,1,7]];
+    const found=[];
+    function mFrame(cur, fnd, label) {
+      return { label, draw(c,W,H) {
+        const sz=Math.min(54,(W-80)/6), sx=W/2-3*sz, sy=H/2-3*sz;
+        A.forEach((row,i) => row.forEach((v,j) => {
+          const x=sx+j*sz, y=sy+i*sz, isCur=cur&&cur[0]===i&&cur[1]===j, isF=fnd.some(([fi,fj])=>fi===i&&fj===j);
+          cell(c,x,y,sz-1,sz-1, isCur?C.accent+'44':isF?C.green+'33':C.surf, isCur?C.accent:isF?C.green:C.border, isCur||isF?2:0.5);
+          txt(c,v,x+sz/2,y+sz/2,{size:13,bold:true});
+        }));
+        txt(c,`Encontradas: ${fnd.map(([i,j])=>`(${i+1},${j+1})`).join(', ')||'—'}`,W/2,sy-20,{size:11,mono:true,color:C.green});
+      }};
+    }
+    steps.push(mFrame(null,[],'Buscando el valor 7 en la matriz 6×6'));
+    A.forEach((row,i) => row.forEach((v,j) => { if(v===7)found.push([i,j]); steps.push(mFrame([i,j],[...found],v===7?`¡Encontrado en (${i+1},${j+1})!`:`(${i+1},${j+1}) = ${v}`)); }));
+    return;
+  }
+
+  // ── MATRIX MULT 
+  if (v === 'mmult') {
+    const MA=[[5,6,13],[3,10,1],[2,11,3]], MB=[[1,2,1],[6,5,15],[3,11,12]], MC=[[0,0,0],[0,0,0],[0,0,0]];
+    function mMulFrame(ci,cj,label) {
+      return { label, draw(c,W,H) {
+        const sz=46, pad=10;
+        function drawMat(mat,ox,oy,title,hiR,hiC,col) {
+          txt(c,title,ox+mat[0].length*sz/2,oy-14,{size:11,color:C.muted});
+          mat.forEach((row,i) => row.forEach((v,j) => {
+            const x=ox+j*sz, y=oy+i*(sz-2), hi=hiR===i||hiC===j;
+            cell(c,x,y,sz-pad,sz-pad, hi?col+'33':C.surf, hi?col:C.border, hi?2:0.5);
+            txt(c,v,x+(sz-pad)/2,y+(sz-pad)/2,{size:12,bold:true});
+          }));
+        }
+        const ox=20; drawMat(MA,ox,60,'A',ci,-1,C.accent); txt(c,'×',ox+3*sz+16,60+3*(sz-pad)/2,{size:20,color:C.muted});
+        drawMat(MB,ox+3*sz+32,60,'B',-1,cj,C.orange); txt(c,'=',ox+6*sz+48,60+3*(sz-pad)/2,{size:20,color:C.muted});
+        drawMat(MC,ox+6*sz+64,60,'C =',ci,cj,C.green);
+      }};
+    }
+    steps.push(mMulFrame(-1,-1,'Multiplicación A × B'));
+    for(let i=0;i<3;i++) for(let j=0;j<3;j++) { MC[i][j]=0; for(let k=0;k<3;k++) MC[i][j]+=MA[i][k]*MB[k][j]; steps.push(mMulFrame(i,j,`C[${i}][${j}] = ${MC[i][j]}`)); }
+    return;
+  }
+
+  // ── CINEMA 
+  if (v === 'cinema') {
+    const seats=Array.from({length:6},()=>new Array(6).fill(false));
+    const ops=[["R",1,1],["R",1,2],["R",1,1],["CONSULTAR",1,2],["L",1,2],["L",1,2],["R",1,2],["R",6,6],["CONSULTAR",6,6],["R",2,5]];
+    function cinFrame(s,last,msg,label) {
+      return { label, draw(c,W,H) {
+        const sz=52, gap=4, sx=W/2-3*(sz+gap), sy=H/2-3*(sz+gap)-10;
+        s.forEach((row,i) => row.forEach((occ,j) => {
+          const x=sx+j*(sz+gap), y=sy+i*(sz+gap), isLast=last&&last[0]===i&&last[1]===j;
+          cell(c,x,y,sz,sz, occ?C.accent+'33':C.surf, isLast?C.orange:occ?C.accent:C.border, isLast?2.5:occ?1.5:0.5);
+          txt(c,occ?'●':`${i+1},${j+1}`,x+sz/2,y+sz/2,{size:occ?20:10,mono:true,color:occ?C.accent:C.muted});
+        }));
+        txt(c,msg,W/2,sy+6*(sz+gap)+16,{size:12,mono:true,color:msg.includes('RECHAZO')?C.red:C.green});
+      }};
+    }
+    steps.push(cinFrame(seats.map(r=>[...r]),null,'Sala vacía 6×6','Sala de cine — estado inicial'));
+    ops.forEach(([a,i,j]) => {
+      const r=i-1,cc=j-1; let msg='';
+      if(a==='R'){if(!seats[r][cc]){seats[r][cc]=true;msg=`OK: reservado (${i},${j})`;}else msg=`RECHAZO: ocupado (${i},${j})`;}
+      else if(a==='L'){if(seats[r][cc]){seats[r][cc]=false;msg=`OK: liberado (${i},${j})`;}else msg=`RECHAZO: ya libre (${i},${j})`;}
+      else msg=`Estado (${i},${j}) = ${seats[r][cc]?'reservado':'libre'}`;
+      steps.push(cinFrame(seats.map(r=>[...r]),[r,cc],msg,msg));
+    });
+    return;
+  }
+
+  // ── QUEUE BASIC 
+  if (v === 'qbasic') {
+    function qFrame(q, hl, label) {
+      return { label, draw(c,W,H) {
+        const bw=70, bh=52, gap=4, sx=W/2-(q.length*(bw+gap))/2, y=H/2-26;
+        if(q.length>0){ txt(c,'FRENTE',sx+35,y-20,{size:9,mono:true,color:C.green}); txt(c,'FINAL',sx+(q.length-1)*(bw+gap)+35,y-20,{size:9,mono:true,color:C.orange}); }
+        q.forEach((v,i) => {
+          const x=sx+i*(bw+gap), t=hl[i]||'def';
+          cell(c,x,y,bw,bh, t==='enq'?C.accent+'44':t==='deq'?C.red+'44':C.surf, t!=='def'?C.accent:C.border, t!=='def'?2:1);
+          txt(c,v,x+bw/2,y+bh/2,{size:18,bold:true});
+        });
+        if(!q.length) txt(c,'[ cola vacía ]',W/2,H/2,{color:C.muted,size:14});
+      }};
+    }
+    const q=[];
+    steps.push(qFrame([],{},'Cola vacía — isEmpty() = True'));
+    q.push(1); steps.push(qFrame([...q],{0:'enq'},'enque(1)'));
+    steps.push(qFrame([...q],{0:'deq'},'deque() → elimina frente'));
+    q.shift();
+    steps.push(qFrame([],{},'Cola vacía de nuevo'));
+    q.push(8); steps.push(qFrame([...q],{0:'enq'},'enque(8)'));
+    q.push(7); steps.push(qFrame([...q],{1:'enq'},'enque(7)'));
+    steps.push(qFrame([...q],{0:'deq'},`peek() = ${q[0]}, size() = ${q.length}`));
+    return;
+  }
+
+  // ── BANK 
+  if (v === 'bank') {
+    const saldos=[1000,1000,1000,1000,1000];
+    function bankFrame(arr, phase, label) {
+      return { label, draw(c,W,H) {
+        const bw=80,gap=10,sx=W/2-(5*(bw+gap))/2,y=H/2-30;
+        arr.forEach((v,i) => {
+          const pct=v/1000, col=v>=1000?C.green:v>=700?C.orange:C.red;
+          cell(c,sx+i*(bw+gap),y,bw,60, col+'22', col, 1.5);
+          txt(c,`P${i+1}`,sx+i*(bw+gap)+bw/2,y+18,{size:10,mono:true,color:C.muted});
+          txt(c,`$${v}`,sx+i*(bw+gap)+bw/2,y+40,{size:13,bold:true,color:col});
+        });
+        txt(c,phase,W/2,y-30,{size:12,color:C.muted});
+      }};
+    }
+    steps.push(bankFrame([...saldos],'Saldos iniciales','Saldos iniciales: $1000 c/u'));
+    for(let i=0;i<5;i++){ saldos[i]=1000-500; } steps.push(bankFrame([...saldos],'Tras retiro de $500','Después de retiro: $500 c/u'));
+    for(let i=0;i<5;i++){ saldos[i]=500+300; } steps.push(bankFrame([...saldos],'Tras depósito de $300','Después de depósito: $800 c/u'));
+    return;
+  }
+
+  // ── DEQUE VIZ 
+  if (v === 'deqv') {
+    function dqFrame(q, hlF, hlB, label) {
+      return { label, draw(c,W,H) {
+        const bw=72,bh=50,gap=5,sx=W/2-(q.length*(bw+gap))/2,y=H/2-25;
+        if(q.length){ txt(c,'◄ FRENTE',sx,y-22,{size:9,mono:true,color:C.cyan,align:'left'}); txt(c,'FINAL ►',sx+(q.length-1)*(bw+gap)+bw,y-22,{size:9,mono:true,color:C.orange,align:'right'}); }
+        q.forEach((v,i) => {
+          const isF=i===0&&hlF, isB=i===q.length-1&&hlB;
+          cell(c,sx+i*(bw+gap),y,bw,bh, isF?C.cyan+'33':isB?C.orange+'33':C.surf, isF?C.cyan:isB?C.orange:C.border, isF||isB?2:1);
+          txt(c,v,sx+i*(bw+gap)+bw/2,y+bh/2,{size:18,bold:true});
+        });
+        if(!q.length) txt(c,'[ bicola vacía ]',W/2,H/2,{color:C.muted});
+      }};
+    }
+    const q=[];
+    steps.push(dqFrame([],false,false,'Bicola vacía'));
+    q.push(1000); steps.push(dqFrame([...q],false,true,'enque_back(1000)'));
+    q.push(1000); steps.push(dqFrame([...q],false,true,'enque_back(1000) × 5 personas'));
+    q.push(1000); q.push(1000); q.push(1000);
+    steps.push(dqFrame([...q],false,false,'5 personas en la bicola con $1000 c/u'));
+    const r=q.shift()-500; q.push(r); steps.push(dqFrame([...q],true,false,`dequeue_front() → retiro $500 → enque_back($${r})`));
+    steps.push(dqFrame([...q],false,false,'Historial: saldo antes de retiro = $1000'));
+    return;
+  }
+
+  // ── CIRC QUEUE 
+  if (v === 'circq' || v === 'circq2') {
+    const cap=5, slots=new Array(cap).fill(null);
+    let fr=-1, fi=-1;
+    function cqFrame(s,f,e,label) {
+      return { label, draw(c,W,H) {
+        const cx=W/2, cy=H/2, R=Math.min(W,H)*0.3;
+        s.forEach((v,i) => {
+          const ang=-Math.PI/2+(2*Math.PI/cap)*i, x=cx+R*Math.cos(ang), y=cy+R*Math.sin(ang);
+          const isF=i===f, isE=i===e, hasV=v!==null;
+          circle(c,x,y,28, isF&&isE?C.accent+'44':isF?C.green+'33':isE?C.orange+'33':hasV?C.surf:'#0c0c14', isF||isE?C.accent:hasV?C.border:'#2e2e4a', isF||isE?2.5:1);
+          txt(c,v===null?'_':v,x,y,{size:12,bold:true,mono:true});
+          txt(c,i,x,y+20,{size:8,mono:true,color:C.muted});
+        });
+        if(f>=0){ const a=-Math.PI/2+(2*Math.PI/cap)*f; txt(c,'F',cx+(R+44)*Math.cos(a),cy+(R+44)*Math.sin(a),{size:11,mono:true,color:C.green}); }
+        if(e>=0){ const a=-Math.PI/2+(2*Math.PI/cap)*e; txt(c,'E',cx+(R+44)*Math.cos(a),cy+(R+44)*Math.sin(a),{size:11,mono:true,color:C.orange}); }
+        txt(c,'F=Frente  E=Final',W/2,H-20,{size:10,color:C.muted});
+      }};
+    }
+    steps.push(cqFrame([...slots],fr,fi,'Cola circular vacía (cap=5)'));
+    ['T1','T2','T3','T4','T5'].forEach(t => { if(fr===-1){fr=fi=0;}else{fi=(fi+1)%cap;} slots[fi]=t; steps.push(cqFrame([...slots],fr,fi,`encolar("${t}")`)); });
+    ['T1','T2'].forEach(() => { const d=slots[fr]; slots[fr]=null; fr=(fr+1)%cap; steps.push(cqFrame([...slots],fr,fi,`desencolar() → "${d}"`)); });
+    ['T6','T7'].forEach(t => { fi=(fi+1)%cap; slots[fi]=t; steps.push(cqFrame([...slots],fr,fi,`encolar("${t}") — reutiliza posición`)); });
+    return;
+  }
+
+  // ── DEQUE MODULE 
+  if (v === 'dqmod') {
+    const saldos=[1000,1000,1000,1000,1000], hR=[], hD=[];
+    function dqmFrame(s,hr,hd,phase,label) {
+      return { label, draw(c,W,H) {
+        const bw=64,bh=42,gap=6,sx=W/2-(5*(bw+gap))/2;
+        txt(c,'Cola de saldos:',sx,H*0.25-20,{size:10,mono:true,color:C.muted,align:'left'});
+        s.forEach((v,i) => { cell(c,sx+i*(bw+gap),H*0.25,bw,bh,C.accent+'22',C.accent,1.5); txt(c,`$${v}`,sx+i*(bw+gap)+bw/2,H*0.25+bh/2,{size:11,bold:true,color:C.accent}); });
+        if(hr.length){ txt(c,'Historial retiros:',sx,H*0.52-20,{size:10,mono:true,color:C.muted,align:'left'}); hr.forEach((v,i) => { cell(c,sx+i*(bw+gap),H*0.52,bw,bh,C.red+'22',C.red,1.5); txt(c,`$${v}`,sx+i*(bw+gap)+bw/2,H*0.52+bh/2,{size:11,bold:true,color:C.red}); }); }
+        if(hd.length){ txt(c,'Historial depósitos:',sx,H*0.75-20,{size:10,mono:true,color:C.muted,align:'left'}); hd.forEach((v,i) => { cell(c,sx+i*(bw+gap),H*0.75,bw,bh,C.green+'22',C.green,1.5); txt(c,`$${v}`,sx+i*(bw+gap)+bw/2,H*0.75+bh/2,{size:11,bold:true,color:C.green}); }); }
+      }};
+    }
+    steps.push(dqmFrame([...saldos],[],[],'inicio','5 personas con $1000 c/u'));
+    for(let i=0;i<5;i++){ const s=saldos.shift(); hR.push(s); saldos.push(s-500); } steps.push(dqmFrame([...saldos],[...hR],[],'retiro',`Tras retiros de $500 → saldos: $${saldos[0]}`));
+    for(let i=0;i<5;i++){ const s=saldos.shift(); hD.push(s); saldos.push(s+300); } steps.push(dqmFrame([...saldos],[...hR],[...hD],'deposito',`Tras depósitos de $300 → saldos: $${saldos[0]}`));
+    return;
+  }
+
+  // ── RATE LIMIT 
+  if (v === 'ratelim') {
+    const reqs=[0,2,4,6,12], maxP=3, t=10, active=[];
+    function rlFrame(all,act,cur,ok,label) {
+      return { label, draw(c,W,H) {
+        const tw=W-80, tx=40, ty=H/2-60, th=50;
+        line(c,tx,ty+th/2,tx+tw,ty+th/2,C.border,2);
+        for(let tt=0;tt<=14;tt+=2){ const x=tx+(tt/14)*tw; line(c,x,ty+th/2-5,x,ty+th/2+5,C.border,1); txt(c,tt,x,ty+th+14,{size:9,mono:true,color:C.muted}); }
+        if(act.length){ const oldest=act[act.length-1], ws=oldest-t, wx=tx+Math.max(0,ws/14)*tw, ww=(t/14)*tw; c.fillStyle=C.accent+'11'; c.fillRect(wx,ty,ww,th); c.strokeStyle=C.accent+'44'; c.lineWidth=1; c.strokeRect(wx,ty,ww,th); }
+        all.forEach(tt => {
+          const x=tx+(tt/14)*tw, isA=act.includes(tt), isCur=tt===cur;
+          circle(c,x,ty+th/2,11, isCur?(ok?C.green:C.red):isA?C.accent:C.surf, isCur?(ok?C.green:C.red):isA?C.accent:C.border, isCur?2.5:1);
+          txt(c,`s${tt}`,x,ty+th/2,{size:8,mono:true,color:C.text});
+        });
+        txt(c,`Ventana activa (${maxP} máx): [${act.join(', ')}]`,tx,ty-20,{size:10,mono:true,align:'left',color:C.muted});
+      }};
+    }
+    steps.push(rlFrame([],[],-1,true,'Rate Limiter: máx 3 peticiones / 10s'));
+    reqs.forEach(seg => {
+      while(active.length && active[active.length-1] <= seg-t) active.pop();
+      const ok=active.length<maxP; if(ok) active.unshift(seg);
+      steps.push(rlFrame([...reqs],[...active],seg,ok,`s=${seg}: ${ok?'✓ ACEPTADA':'✗ EN ESPERA (límite alcanzado)'}`));
+    });
+    return;
+  }
+
+  // ── RETRY 
+  if (v === 'retry') {
+    const tasks=[["T1",1],["T2",0],["T3",2],["T4",1],["T5",0]], queue=[...tasks], done=[];
+    function retryFrame(q,d,cur,label) {
+      return { label, draw(c,W,H) {
+        const bw=76,bh=44,gap=8,sx=40,y=H/2-22;
+        txt(c,'Cola de tareas:',sx,y-22,{size:10,mono:true,color:C.muted,align:'left'});
+        q.forEach(([name,f],i) => {
+          const isCur=name===cur;
+          cell(c,sx+i*(bw+gap),y,bw,bh, isCur?C.accent+'44':C.surf, isCur?C.accent:C.border, isCur?2:1);
+          txt(c,name,sx+i*(bw+gap)+bw/2,y+18,{size:14,bold:true});
+          txt(c,`fallos:${f}`,sx+i*(bw+gap)+bw/2,y+34,{size:9,mono:true,color:C.orange});
+        });
+        if(d.length){ txt(c,'Completadas:',sx,H-60,{size:10,mono:true,color:C.muted,align:'left'}); d.forEach((name,i) => { cell(c,sx+i*(bw+gap),H-52,bw,36, C.green+'22',C.green,1.5); txt(c,name,sx+i*(bw+gap)+bw/2,H-34,{size:13,bold:true,color:C.green}); }); }
+      }};
+    }
+    steps.push(retryFrame([...queue],[],null,'Cola inicial de tareas con reintentos'));
+    while(queue.length){ const [n,f]=queue.shift(); if(f>0){queue.push([n,f-1]);steps.push(retryFrame([...queue],[...done],n,`${n} falló → reintento al final`));}else{done.push(n);steps.push(retryFrame([...queue],[...done],null,`${n} ✓ completada`));} }
+    return;
+  }
+
+  // ── STACK 
+  if (v === 'stackv' || v === 'candystack') {
+    const items = v==='candystack' ? [11890,12500.5,13010.35,13650.8,14100,14780.4,14999.99,15120,15550.75,15800,16250.25] : [1,2,3];
+    function stkFrame(stk, hl, label) {
+      return { label, draw(c,W,H) {
+        const bw=180, bh=42, gap=3, sx=W/2-90, baseY=H-50;
+        c.fillStyle=C.border; c.fillRect(sx-12,baseY,bw+24,6);
+        stk.forEach((v,i) => {
+          const y=baseY-(i+1)*(bh+gap), isTop=i===stk.length-1, isHl=hl===i;
+          cell(c,sx,y,bw,bh, isTop?C.accent+'33':isHl?C.red+'33':C.surf, isTop?C.accent:C.border, isTop?2:1);
+          txt(c,v,sx+bw/2,y+bh/2,{size:v>9999?11:14,bold:true,mono:v>9999});
+          if(isTop){ txt(c,'← TOP',sx+bw+8,y+bh/2,{size:9,mono:true,align:'left',color:C.accent}); }
+        });
+        if(!stk.length) txt(c,'[ pila vacía ]',W/2,H/2,{color:C.muted});
+      }};
+    }
+    const stk=[];
+    steps.push(stkFrame([],null,'Pila vacía'));
+    items.forEach(v => { stk.push(v); steps.push(stkFrame([...stk],stk.length-1,`push(${v})`)); });
+    steps.push(stkFrame([...stk],stk.length-1,`peek() = ${stk[stk.length-1]}`));
+    const p=stk.pop(); steps.push(stkFrame([...stk],null,`pop() → ${p}`));
+    return;
+  }
+
+  // ── BST 
+  if (v === 'bst' || v === 'traversal') {
+    const seq = v==='bst' ? [1,13,11,5,9,10,12,3,6] : [3,1,4,2,5];
+    let tree=null;
+    function ins(n,val){ if(!n)return{val,l:null,r:null}; if(val<n.val)n.l=ins(n.l,val); else if(val>n.val)n.r=ins(n.r,val); return n; }
+    function layout(n,x,y,sp){ if(!n)return; n.x=x; n.y=y; layout(n.l,x-sp,y+68,sp/2); layout(n.r,x+sp,y+68,sp/2); }
+    function drawTree(root, hl, label) {
+      return { label, draw(c,W,H) {
+        layout(root,W/2,52,W/5);
+        function edges(n){ if(!n)return; if(n.l){line(c,n.x,n.y,n.l.x,n.l.y,C.border,1.5);edges(n.l);} if(n.r){line(c,n.x,n.y,n.r.x,n.r.y,C.border,1.5);edges(n.r);} }
+        function nodes(n){ if(!n)return; const on=hl&&hl.includes(n.val); circle(c,n.x,n.y,20,on?C.accent+'44':C.surf,on?C.accent:C.border,on?2.5:1.5); txt(c,n.val,n.x,n.y,{size:13,bold:true}); nodes(n.l); nodes(n.r); }
+        edges(root); nodes(root);
+      }};
+    }
+    seq.forEach(val => { tree=ins(tree,val); steps.push(drawTree(JSON.parse(JSON.stringify(tree)),[val],`Insertando ${val}`)); });
+    if(v==='traversal') {
+      function pre(n,r=[]){if(!n)return r;r.push(n.val);pre(n.l,r);pre(n.r,r);return r;}
+      function ino(n,r=[]){if(!n)return r;ino(n.l,r);r.push(n.val);ino(n.r,r);return r;}
+      function pos(n,r=[]){if(!n)return r;pos(n.l,r);pos(n.r,r);r.push(n.val);return r;}
+      const snap=JSON.parse(JSON.stringify(tree));
+      pre(snap).forEach((v,i,a)=>steps.push(drawTree(JSON.parse(JSON.stringify(snap)),a.slice(0,i+1),`Preorden: [${a.slice(0,i+1)}]`)));
+      ino(snap).forEach((v,i,a)=>steps.push(drawTree(JSON.parse(JSON.stringify(snap)),a.slice(0,i+1),`Inorden: [${a.slice(0,i+1)}]`)));
+      pos(snap).forEach((v,i,a)=>steps.push(drawTree(JSON.parse(JSON.stringify(snap)),a.slice(0,i+1),`Postorden: [${a.slice(0,i+1)}]`)));
+    }
+    return;
+  }
+
+  // ── BFS 
+  if (v === 'bfsv') {
+    const pos={A:{x:.5,y:.1},B:{x:.25,y:.35},C:{x:.75,y:.35},D:{x:.1,y:.65},E:{x:.4,y:.65},F:{x:.6,y:.65},G:{x:.9,y:.65}};
+    const edges=[['A','B'],['A','C'],['B','D'],['B','E'],['C','F'],['C','G']];
+    const graph={A:['B','C'],B:['D','E'],C:['F','G'],D:[],E:[],F:[],G:[]};
+    function bfsFrame(vis,cur,queue,label) {
+      return { label, draw(c,W,H) {
+        edges.forEach(([a,b]) => line(c,pos[a].x*W,pos[a].y*H+20,pos[b].x*W,pos[b].y*H+20,C.border,1.5));
+        Object.entries(pos).forEach(([k,p]) => {
+          const x=p.x*W, y=p.y*H+20, isV=vis.includes(k), isCur=k===cur, isQ=queue.includes(k);
+          circle(c,x,y,22, isCur?C.accent:isV?C.green+'33':isQ?C.orange+'33':C.surf, isCur?C.accent:isV?C.green:isQ?C.orange:C.border, isCur||isV?2.5:1.5);
+          txt(c,k,x,y,{size:14,bold:true,color:C.text});
+        });
+        txt(c,`Cola: [${queue.join(', ')}]`,10,12,{size:10,mono:true,align:'left',color:C.muted});
+        txt(c,`Visitados: [${vis.join(', ')}]`,10,28,{size:10,mono:true,align:'left',color:C.green});
+      }};
+    }
+    const vis=[],q=['A'];
+    steps.push(bfsFrame([],null,['A'],'Inicio: enqueue A'));
+    while(q.length){ const cur=q.shift(); vis.push(cur); steps.push(bfsFrame([...vis],cur,[...q],`Procesando ${cur}`)); (graph[cur]||[]).forEach(nb=>{if(!vis.includes(nb)&&!q.includes(nb)){q.push(nb);steps.push(bfsFrame([...vis],cur,[...q],`Enqueue vecino ${nb}` ));}}); }
+    return;
+  }
+
+  // ── DIJKSTRA 
+  if (v === 'dijkv') {
+    const pos={0:{x:.12,y:.5},1:{x:.32,y:.2},2:{x:.65,y:.82},3:{x:.6,y:.28},4:{x:.45,y:.6},5:{x:.78,y:.28},6:{x:.52,y:.72},7:{x:.82,y:.55}};
+    const graph={0:{1:9,4:6},1:{0:9,3:8},2:{4:5,5:6},3:{1:8,5:1,7:7},4:{0:6,2:5,6:3},5:{2:6,3:1},6:{4:3,7:2},7:{3:7,6:2}};
+    const dist={}, prev={};
+    Object.keys(graph).forEach(n=>{dist[n]=Infinity;prev[n]=null;}); dist[0]=0;
+    function dijkFrame(vis,cur,label) {
+      return { label, draw(c,W,H) {
+        Object.keys(graph).forEach(u=>Object.keys(graph[u]).forEach(v=>{if(+u<+v){ const pu=pos[u],pv=pos[v]; line(c,pu.x*W,pu.y*H,pv.x*W,pv.y*H,C.border,1); txt(c,graph[u][v],(pu.x+pv.x)/2*W,(pu.y+pv.y)/2*H,{size:9,mono:true,color:C.muted}); }}));
+        Object.keys(graph).forEach(n=>{ const p=pos[n],x=p.x*W,y=p.y*H,isV=vis.includes(+n),isCur=+n===+cur; circle(c,x,y,20, isCur?C.accent:isV?C.green+'33':C.surf, isCur?C.accent:isV?C.green:C.border, isCur||isV?2:1.5); txt(c,n,x,y,{size:13,bold:true}); const d=dist[n]; txt(c,d===Infinity?'∞':d,x,y+26,{size:9,mono:true,color:C.orange}); });
+      }};
+    }
+    const vis=[], pq=[[0,0]];
+    steps.push(dijkFrame([],null,'Inicio Dijkstra desde nodo 0'));
+    while(pq.length){ pq.sort((a,b)=>a[0]-b[0]); const [d,u]=pq.shift(); if(vis.includes(u))continue; vis.push(u); steps.push(dijkFrame([...vis],u,`Visitando nodo ${u} (dist=${d})`)); Object.entries(graph[u]).forEach(([v,w])=>{ const nd=dist[u]+w; if(nd<dist[v]){dist[v]=nd;prev[v]=u;pq.push([nd,+v]);steps.push(dijkFrame([...vis],u,`dist[${v}] = ${nd}`));} }); }
+    return;
+  }
+
+  // ── PRIM 
+  if (v === 'primv') {
+    const pos={'0':{x:.2,y:.3},'1':{x:.5,y:.15},'2':{x:.2,y:.72},'3':{x:.7,y:.72},'4':{x:.65,y:.35},'5':{x:.85,y:.55}};
+    const graph={'0':{'2':20,'1':10},'1':{'0':10,'4':10,'3':50},'2':{'0':20,'4':33,'3':20},'3':{'1':50,'2':20,'4':20,'5':2},'4':{'2':33,'1':10,'3':20,'5':1},'5':{'4':1,'3':2}};
+    const mstEdges=[];
+    function primFrame(vis,mst,label) {
+      return { label, draw(c,W,H) {
+        Object.keys(graph).forEach(u=>Object.keys(graph[u]).forEach(v=>{if(+u<+v){ const pu=pos[u],pv=pos[v]; line(c,pu.x*W,pu.y*H,pv.x*W,pv.y*H,C.border,1); txt(c,graph[u][v],(pu.x+pv.x)/2*W,(pu.y+pv.y)/2*H,{size:9,mono:true,color:C.muted}); }}));
+        mst.forEach(([u,v])=>{ const pu=pos[u],pv=pos[v]; line(c,pu.x*W,pu.y*H,pv.x*W,pv.y*H,C.green,3); });
+        Object.keys(graph).forEach(n=>{ const p=pos[n],x=p.x*W,y=p.y*H,isV=vis.includes(n); circle(c,x,y,20,isV?C.green+'33':C.surf,isV?C.green:C.border,isV?2:1.5); txt(c,n,x,y,{size:14,bold:true}); });
+        txt(c,'Verde = aristas del MST',W/2,H-16,{size:10,color:C.muted});
+      }};
+    }
+    const vis=['2']; steps.push(primFrame([...vis],[],'Inicio Prim desde nodo 2'));
+    const pq=[]; Object.entries(graph['2']).forEach(([v,w])=>pq.push([w,'2',v]));
+    while(pq.length){ pq.sort((a,b)=>a[0]-b[0]); const [w,u,v]=pq.shift(); if(vis.includes(v))continue; vis.push(v); mstEdges.push([u,v]); steps.push(primFrame([...vis],[...mstEdges],`Añadir arista ${u}—${v} (peso ${w})`)); Object.entries(graph[v]).forEach(([nb,pw])=>{if(!vis.includes(nb))pq.push([pw,v,nb]);}); }
+    return;
+  }
+
+  // ── HANOI 
+  if (v === 'hanoi') {
+    const N=4, rods={A:[],B:[],C:[]};
+    for(let i=N;i>=1;i--) rods.A.push(i);
+    function hFrame(state, moved, label) {
+      return { label, draw(c,W,H) {
+        const rdX={A:W*0.2,B:W*0.5,C:W*0.8}, baseY=H-50, maxW=90, dh=20;
+        ['A','B','C'].forEach(r => {
+          const x=rdX[r]; c.fillStyle=C.border; c.fillRect(x-3,baseY-N*dh-20,6,N*dh+20); c.fillRect(x-52,baseY,104,7);
+          txt(c,r,x,baseY+24,{size:14,bold:true,color:C.muted});
+          state[r].forEach((disk,i) => {
+            const w=18+disk*(maxW/N), y=baseY-(i+1)*dh, isMoved=moved===disk;
+            c.fillStyle=isMoved?C.accent:[C.red,C.orange,C.green,C.cyan][disk-1]||C.muted;
+            c.beginPath(); c.roundRect(x-w/2,y,w,dh-2,4); c.fill();
+            txt(c,disk,x,y+(dh-2)/2,{size:9,mono:true,color:'rgba(0,0,0,0.6)',bold:true});
+          });
+        });
+      }};
+    }
+    steps.push(hFrame({A:[...rods.A],B:[...rods.B],C:[...rods.C]},null,`Torres de Hanoi — ${N} discos`));
+    function hanoi(n,from,to,aux){ if(n===0)return; hanoi(n-1,from,aux,to); const disk=rods[from].pop(); rods[to].push(disk); steps.push(hFrame({A:[...rods.A],B:[...rods.B],C:[...rods.C]},disk,`Disco ${disk}: ${from} → ${to}`)); hanoi(n-1,aux,to,from); }
+    hanoi(N,'A','C','B');
+    return;
+  }
+
+  // ── NONE / DEFAULT 
+  steps.push({ label:'Este ejercicio usa archivo CSV externo — ver código', draw(c,W,H) {
+    txt(c,'📊',W/2,H/2-40,{size:40});
+    txt(c,'dataframe.py requiere pandas y el archivo Housing1.csv',W/2,H/2+10,{size:13,color:C.muted});
+    txt(c,'Copia el código y ejecútalo en VS Code con tu archivo CSV',W/2,H/2+34,{size:11,mono:true,color:C.accent});
+  }});
+}
+
+// ── INIT 
+setMode('both');
+select(CATS[0].items[0], CATS[0].color, CATS[0].name);
+</script>
+</body>
+</html>
