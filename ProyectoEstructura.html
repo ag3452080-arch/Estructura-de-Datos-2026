@@ -4,76 +4,210 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Estructuras de Datos - Python</title>
-<link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html, body {
-  height: 100%;
-  overflow: hidden;
-  font-family: 'Inter', Arial, sans-serif;
-  background: #f4f5f9;
-  color: #333;
+body {
+  font-family: Arial, sans-serif;
+  background: #f0f0f0;
+  color: #222;
   font-size: 14px;
+  height: 100vh;
+  overflow: hidden;
 }
 
 #app { display: flex; height: 100vh; }
-#sidebar { width: 220px; min-width: 220px; background: #fff; border-right: 1px solid #e2e4ec; display: flex; flex-direction: column; overflow: hidden; }
+
+#sidebar {
+  width: 210px;
+  min-width: 210px;
+  background: #fff;
+  border-right: 2px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#logo {
+  padding: 10px 12px;
+  border-bottom: 1px solid #ccc;
+  background: #2255aa;
+  color: #fff;
+}
+#logo h1 { font-size: 14px; }
+#logo p  { font-size: 11px; margin-top: 2px; color: #cde; }
+
+#nav { flex: 1; overflow-y: auto; padding: 4px 0 8px; }
+
+.cat {
+  padding: 8px 10px 2px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  color: #333;
+  border-left: 3px solid transparent;
+}
+.item:hover { background: #eef; }
+.item.on {
+  background: #dde8ff;
+  border-left-color: #2255aa;
+  color: #2255aa;
+  font-weight: bold;
+}
+.dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
 #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
-#logo { padding: 14px 14px 12px; border-bottom: 1px solid #e2e4ec; }
-#logo h1 { font-size: 13px; font-weight: 600; color: #333; }
-#logo p { font-size: 11px; color: #aaa; margin-top: 3px; font-family: 'Source Code Pro', monospace; }
-
-#nav { flex: 1; overflow-y: auto; padding: 4px 0 12px; }
-#nav::-webkit-scrollbar { width: 4px; }
-#nav::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
-.cat { padding: 10px 12px 3px; font-size: 10px; font-weight: 600; color: #bbb; text-transform: uppercase; letter-spacing: 0.07em; }
-.item { display: flex; align-items: center; gap: 8px; padding: 6px 12px; font-size: 12.5px; cursor: pointer; color: #555; border-left: 2px solid transparent; line-height: 1.4; }
-.item:hover { background: #f0f2fa; color: #222; }
-.item.on { background: #eef1ff; border-left-color: #5a67f2; color: #3a46c9; font-weight: 600; }
-.dot { width: 7px; height: 7px; border-radius: 2px; flex-shrink: 0; }
-
-#topbar { display: flex; align-items: center; gap: 10px; padding: 0 16px; height: 46px; border-bottom: 1px solid #e2e4ec; background: #fff; flex-shrink: 0; }
-#pname { font-size: 13px; font-weight: 600; flex: 1; color: #222; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-#pbadge { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-family: 'Source Code Pro', monospace; background: #f0f2fa; color: #999; border: 1px solid #e2e4ec; }
-.tb { padding: 4px 12px; font-size: 12px; border: 1px solid #dde0ed; border-radius: 6px; cursor: pointer; background: #f4f5f9; color: #666; font-family: 'Inter', sans-serif; white-space: nowrap; }
-.tb:hover { background: #eef1ff; color: #3a46c9; border-color: #b0b8f0; }
-.tb.on { background: #eef1ff; border-color: #5a67f2; color: #3a46c9; font-weight: 600; }
+#topbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-bottom: 1px solid #ccc;
+  background: #fff;
+  flex-shrink: 0;
+}
+#pname { font-size: 13px; font-weight: bold; flex: 1; }
+#pbadge {
+  font-size: 11px;
+  padding: 2px 7px;
+  background: #eee;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+.tb {
+  padding: 4px 10px;
+  font-size: 12px;
+  border: 1px solid #aaa;
+  cursor: pointer;
+  background: #eee;
+  color: #333;
+}
+.tb:hover { background: #dde; }
+.tb.on { background: #2255aa; color: #fff; border-color: #2255aa; }
 
 #panels { flex: 1; display: flex; overflow: hidden; }
 
 #viz { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
-#vizbar { display: flex; align-items: center; gap: 8px; padding: 7px 14px; border-bottom: 1px solid #e2e4ec; flex-shrink: 0; flex-wrap: wrap; background: #fff; }
-#vdesc { font-size: 12px; color: #999; flex: 1; min-width: 80px; }
-.cbtn { padding: 4px 12px; font-size: 12px; border: 1px solid #dde0ed; border-radius: 6px; cursor: pointer; background: #f4f5f9; color: #555; font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
-.cbtn:hover { background: #eef1ff; color: #3a46c9; }
-.cbtn.play { background: #5a67f2; border-color: #5a67f2; color: #fff; }
-.cbtn.play:hover { background: #4a56d9; }
-#spd { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #bbb; white-space: nowrap; }
-#spd input { width: 65px; accent-color: #5a67f2; }
-#cvwrap { flex: 1; position: relative; overflow: hidden; background: #f4f5f9; display: flex; align-items: center; justify-content: center; }
+
+#vizbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-bottom: 1px solid #ccc;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  background: #f8f8f8;
+}
+#vdesc { font-size: 11px; color: #666; flex: 1; min-width: 80px; }
+
+.cbtn {
+  padding: 4px 10px;
+  font-size: 12px;
+  border: 1px solid #aaa;
+  cursor: pointer;
+  background: #eee;
+  color: #333;
+}
+.cbtn:hover { background: #dde; }
+.cbtn.play { background: #2255aa; color: #fff; border-color: #2255aa; }
+.cbtn.play:hover { background: #1a4499; }
+
+#spd { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #888; }
+#spd input { width: 65px; }
+
+#cvwrap {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 canvas { display: block; }
-#info { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); background: #fff; border: 1px solid #e2e4ec; padding: 5px 16px; border-radius: 20px; font-size: 12px; font-family: 'Source Code Pro', monospace; color: #5a67f2; max-width: 92%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
 
-#codepanel { width: 400px; min-width: 280px; border-left: 1px solid #e2e4ec; display: flex; flex-direction: column; overflow: hidden; background: #fff; }
-#codebar { padding: 8px 12px; border-bottom: 1px solid #e2e4ec; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; gap: 8px; background: #fff; }
-#codebar span { font-size: 12px; font-weight: 600; color: #aaa; }
+#info {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fffff0;
+  border: 1px solid #ccc;
+  padding: 4px 14px;
+  font-size: 12px;
+  font-family: monospace;
+  color: #333;
+  max-width: 92%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+
+#codepanel {
+  width: 380px;
+  min-width: 260px;
+  border-left: 2px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+}
+#codebar {
+  padding: 6px 10px;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  background: #f0f0f0;
+}
+#codebar span { font-size: 12px; font-weight: bold; color: #555; }
 #codebar .right { display: flex; gap: 6px; align-items: center; }
-.cbarbtn { padding: 3px 10px; font-size: 11px; border: 1px solid #dde0ed; border-radius: 6px; cursor: pointer; background: #f4f5f9; color: #666; font-family: 'Inter', sans-serif; white-space: nowrap; }
-.cbarbtn:hover { background: #eef1ff; color: #3a46c9; }
-#filename { font-size: 11px; color: #5a67f2; font-family: 'Source Code Pro', monospace; }
-#codebody { flex: 1; overflow: auto; padding: 14px 16px; background: #fafbff; }
-#codebody::-webkit-scrollbar { width: 4px; }
-#codebody::-webkit-scrollbar-thumb { background: #ddd; border-radius: 4px; }
-pre { font-family: 'Source Code Pro', monospace; font-size: 12.5px; line-height: 1.75; color: #334; white-space: pre; tab-size: 4; }
+.cbarbtn {
+  padding: 3px 8px;
+  font-size: 11px;
+  border: 1px solid #aaa;
+  cursor: pointer;
+  background: #fff;
+  color: #333;
+}
+.cbarbtn:hover { background: #eee; }
+#filename { font-size: 11px; color: #2255aa; font-family: monospace; }
 
-.kw { color: #5a36d4; font-weight: 600; }
-.fn { color: #0a7aba; }
-.st { color: #b84c20; }
+#codebody {
+  flex: 1;
+  overflow: auto;
+  padding: 10px 12px;
+  background: #1e1e1e;
+}
+pre {
+  font-family: 'Courier New', monospace;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: #d4d4d4;
+  white-space: pre;
+  tab-size: 4;
+}
+
+.kw { color: #569cd6; font-weight: bold; }
+.fn { color: #dcdcaa; }
+.st { color: #ce9178; }
 .cm { color: #6a9955; font-style: italic; }
-.nm { color: #1a8060; }
-.bi { color: #0a6fa0; }
+.nm { color: #b5cea8; }
+.bi { color: #4ec9b0; }
 </style>
 </head>
 <body>
@@ -89,27 +223,23 @@ pre { font-family: 'Source Code Pro', monospace; font-size: 12.5px; line-height:
       <span id="pname">Selecciona un ejercicio</span>
       <span id="pbadge"></span>
       <div style="flex:1"></div>
-      <button class="tb on" onclick="setMode('both')">Ambos</button>
-      <button class="tb" onclick="setMode('viz')">Visual</button>
-      <button class="tb" onclick="setMode('code')">Codigo</button>
+      
     </div>
     <div id="panels">
       <div id="viz">
         <div id="vizbar">
           <span id="vdesc">—</span>
-          <div id="spd">Vel:<input type="range" id="speed" min="1" max="5" value="3"></div>
           <button class="cbtn" onclick="doReset()">Reiniciar</button>
-          <button class="cbtn play" onclick="doPlay()">Animar</button>
+          <button class="cbtn play" onclick="doPlay()">Comenzar</button>
         </div>
         <div id="cvwrap"><canvas id="cv"></canvas></div>
-        <div id="info">← Selecciona un ejercicio del menú</div>
+        <div id="info"> Selecciona un ejercicio del menú</div>
       </div>
       <div id="codepanel">
         <div id="codebar">
           <span>Código Python</span>
           <div class="right">
             <span id="filename"></span>
-            <button class="cbarbtn" onclick="doCopy()">Copiar</button>
           </div>
         </div>
         <div id="codebody"><pre id="codedisp">// Selecciona un programa del menú lateral</pre></div>
@@ -119,7 +249,7 @@ pre { font-family: 'Source Code Pro', monospace; font-size: 12.5px; line-height:
 </div>
 
 <script>
-//  Catalo de archivo hechos en clase
+//  Catalo de progrmas hechos en clase
 const CATS = [
 {name:"Arreglos", color:"#7c6dfa", items:[
   {id:"arr_uni", file:"Arreglo_Unidimesional.py", name:"Arreglo sin duplicados",
@@ -1452,12 +1582,10 @@ hanoi(numero_de_discos, 'A', 'C', 'B')`},
 ]},
 ];
 
-//  STATE
 let current = null;
 let steps = [], stepIdx = 0, timer = null;
 let mode = 'both';
 
-//  NAV BUILD
 const navEl = document.getElementById('nav');
 CATS.forEach(cat => {
   const h = document.createElement('div');
@@ -1472,7 +1600,6 @@ CATS.forEach(cat => {
   });
 });
 
-//  SELECT
 function select(item, color, catName) {
   current = item;
   stopAnim();
@@ -1489,7 +1616,6 @@ function select(item, color, catName) {
   drawStep();
 }
 
-//  SYNTAX HIGHLIGHT
 function highlight(code) {
   return code
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
@@ -1509,7 +1635,6 @@ function doCopy() {
   });
 }
 
-//  PANEL MODE
 function setMode(m) {
   mode = m;
   document.querySelectorAll('.tb').forEach((b,i) => b.classList.toggle('on', ['both','viz','code'][i] === m));
@@ -1520,7 +1645,6 @@ function setMode(m) {
   setTimeout(resizeCv, 30);
 }
 
-//  CANVAS
 const cv = document.getElementById('cv');
 const cx = cv.getContext('2d');
 
@@ -1539,7 +1663,7 @@ function doPlay()  { stopAnim(); buildSteps(); stepIdx = 0; runAnim(); }
 function stopAnim() { if (timer) clearTimeout(timer); timer = null; }
 
 function runAnim() {
-  if (stepIdx >= steps.length) { setInfo('✓ Animación completada'); return; }
+  if (stepIdx >= steps.length) { setInfo('Animacion completada'); return; }
   drawStep(); stepIdx++;
   const ms = (6 - parseInt(document.getElementById('speed').value)) * 160;
   timer = setTimeout(runAnim, ms);
@@ -1553,7 +1677,6 @@ function drawStep() {
   setInfo(s.label);
 }
 
-//  VIZ BUILDERS
 
 function buildSteps() {
   steps = [];
@@ -1561,14 +1684,13 @@ function buildSteps() {
   const v = current.viz;
   const W = cv.width, H = cv.height;
 
-  // ── HELPERS 
-  const C = { accent:'#5a67f2', green:'#2da882', red:'#e05c4a', orange:'#d97a1a',
-               cyan:'#0a8fba', text:'#333', muted:'#999', surf:'#eef0f8', border:'#ccd0e0' };
+  const C = { accent:'#2255aa', green:'#2a9d2a', red:'#cc3333', orange:'#cc7700',
+               cyan:'#0a8fba', text:'#222', muted:'#888', surf:'#f0f0f0', border:'#999' };
 
   function txt(c, t, x, y, opts={}) {
     c.save();
     c.fillStyle = opts.color||C.text;
-    c.font = `${opts.bold?'bold ':''} ${opts.size||13}px ${opts.mono?'JetBrains Mono':'Outfit'},monospace`;
+    c.font = `${opts.bold?'bold ':''} ${opts.size||13}px ${opts.mono?'Courier New':'Arial'},monospace`;
     c.textAlign = opts.align||'center';
     c.textBaseline = opts.base||'middle';
     c.fillText(t, x, y);
@@ -1595,7 +1717,6 @@ function buildSteps() {
     c.strokeStyle = color; c.lineWidth = lw; c.stroke();
   }
 
-  // ── BARS (sorting) 
   const SA = [10,50,23,3,43,23,29,49,12,40];
 
   function barFrame(arr, hl, label) {
@@ -1613,7 +1734,6 @@ function buildSteps() {
     }};
   }
 
-  // ── BUBBLE SORT 
   if (v === 'sort_bubble') {
     let a=[...SA];
     steps.push(barFrame([...a],{},'Bubble Sort — Estado inicial'));
@@ -1622,14 +1742,13 @@ function buildSteps() {
       const hl={}; hl[j]='cmp'; hl[j+1]='cmp';
       for(let k=n-i;k<n;k++) hl[k]='done';
       steps.push(barFrame([...a],hl,`Bubble: comparando ${a[j]} y ${a[j+1]}`));
-      if(a[j]>a[j+1]){ [a[j],a[j+1]]=[a[j+1],a[j]]; const h2={}; h2[j]='sw'; h2[j+1]='sw'; for(let k=n-i;k<n;k++) h2[k]='done'; steps.push(barFrame([...a],h2,`Swap → ${a[j]} ↔ ${a[j+1]}`)); }
+      if(a[j]>a[j+1]){ [a[j],a[j+1]]=[a[j+1],a[j]]; const h2={}; h2[j]='sw'; h2[j+1]='sw'; for(let k=n-i;k<n;k++) h2[k]='done'; steps.push(barFrame([...a],h2,`Swap: ${a[j]} <-> ${a[j+1]}`)); }
     }
     const fin={}; for(let k=0;k<n;k++) fin[k]='done';
-    steps.push(barFrame([...a],fin,'✓ Ordenado (Bubble Sort)'));
+    steps.push(barFrame([...a],fin,'Ordenado (Bubble Sort)'));
     return;
   }
 
-  // ── SELECTION SORT 
   if (v === 'sort_selection') {
     let a=[...SA]; const n=a.length;
     steps.push(barFrame([...a],{},'Selection Sort — Estado inicial'));
@@ -1638,19 +1757,19 @@ function buildSteps() {
       for(let j=i+1;j<n;j++) {
         const hl={}; hl[minIdx]='cmp'; hl[j]='cmp';
         for(let k=0;k<i;k++) hl[k]='done';
-        steps.push(barFrame([...a],hl,`Selection: buscando mínimo — comparando ${a[j]} con mín actual ${a[minIdx]}`));
+        steps.push(barFrame([...a],hl,`Selection: buscando minimo — comparando ${a[j]} con min actual ${a[minIdx]}`));
         if(a[j]<a[minIdx]) minIdx=j;
       }
       if(minIdx!==i){ [a[i],a[minIdx]]=[a[minIdx],a[i]]; }
       const hl2={}; for(let k=0;k<=i;k++) hl2[k]='done';
-      steps.push(barFrame([...a],hl2,`Selection: mínimo ${a[i]} colocado en posición ${i}`));
+      steps.push(barFrame([...a],hl2,`Selection: minimo ${a[i]} colocado en posicion ${i}`));
     }
     const fin={}; for(let k=0;k<n;k++) fin[k]='done';
-    steps.push(barFrame([...a],fin,'✓ Ordenado (Selection Sort)'));
+    steps.push(barFrame([...a],fin,'Ordenado (Selection Sort)'));
     return;
   }
 
-  // ── INSERTION SORT 
+  // INSERTION SORT
   if (v === 'sort_insertion') {
     let a=[...SA]; const n=a.length;
     steps.push(barFrame([...a],{},'Insertion Sort — Estado inicial'));
@@ -1661,14 +1780,13 @@ function buildSteps() {
       while(j>=0 && val<a[j]){ a[j+1]=a[j]; j--; }
       a[j+1]=val;
       const hl2={}; for(let k=0;k<=i;k++) hl2[k]='done';
-      steps.push(barFrame([...a],hl2,`Insertion: ${val} insertado en posición ${j+1}`));
+      steps.push(barFrame([...a],hl2,`Insertion: ${val} insertado en posicion ${j+1}`));
     }
     const fin={}; for(let k=0;k<n;k++) fin[k]='done';
-    steps.push(barFrame([...a],fin,'✓ Ordenado (Insertion Sort)'));
+    steps.push(barFrame([...a],fin,'Ordenado (Insertion Sort)'));
     return;
   }
 
-  // ── MERGE SORT 
   if (v === 'sort_merge') {
     let a=[...SA];
     steps.push(barFrame([...a],{},'Merge Sort — Estado inicial'));
@@ -1691,11 +1809,10 @@ function buildSteps() {
     }
     mergeSortViz(a,0,a.length-1);
     const fin={}; for(let k=0;k<a.length;k++) fin[k]='done';
-    steps.push(barFrame([...a],fin,'✓ Ordenado (Merge Sort)'));
+    steps.push(barFrame([...a],fin,'Ordenado (Merge Sort)'));
     return;
   }
 
-  // ── QUICK SORT 
   if (v === 'sort_quick') {
     let a=[...SA];
     steps.push(barFrame([...a],{},'Quick Sort — Estado inicial'));
@@ -1709,7 +1826,7 @@ function buildSteps() {
         while(arr[i]<pivotVal) i++;
         while(arr[j]>pivotVal) j--;
         if(i<=j){
-          if(i!==j){ const h={}; h[i]='cmp'; h[j]='cmp'; steps.push(barFrame([...arr],h,`Quick: swap ${arr[i]} ↔ ${arr[j]}`)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+          if(i!==j){ const h={}; h[i]='cmp'; h[j]='cmp'; steps.push(barFrame([...arr],h,`Quick: swap ${arr[i]} <-> ${arr[j]}`)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
           i++; j--;
         }
       }
@@ -1718,11 +1835,10 @@ function buildSteps() {
     }
     quickSortViz(a,0,a.length-1);
     const fin={}; for(let k=0;k<a.length;k++) fin[k]='done';
-    steps.push(barFrame([...a],fin,'✓ Ordenado (Quick Sort)'));
+    steps.push(barFrame([...a],fin,'Ordenado (Quick Sort)'));
     return;
   }
 
-  // ── RANDOM QUICK SORT 
   if (v === 'sort_rquick') {
     let a=[...SA];
     steps.push(barFrame([...a],{},'Random Quick Sort — Estado inicial'));
@@ -1736,7 +1852,7 @@ function buildSteps() {
         while(arr[i]<pivotVal) i++;
         while(arr[j]>pivotVal) j--;
         if(i<=j){
-          if(i!==j){ const h={}; h[i]='cmp'; h[j]='cmp'; steps.push(barFrame([...arr],h,`RandQuick: swap ${arr[i]} ↔ ${arr[j]}`)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+          if(i!==j){ const h={}; h[i]='cmp'; h[j]='cmp'; steps.push(barFrame([...arr],h,`RandQuick: swap ${arr[i]} <-> ${arr[j]}`)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
           i++; j--;
         }
       }
@@ -1745,11 +1861,10 @@ function buildSteps() {
     }
     rquickSortViz(a,0,a.length-1);
     const fin={}; for(let k=0;k<a.length;k++) fin[k]='done';
-    steps.push(barFrame([...a],fin,'✓ Ordenado (Random Quick Sort)'));
+    steps.push(barFrame([...a],fin,'Ordenado (Random Quick Sort)'));
     return;
   }
 
-  // ── COUNTING SORT 
   if (v === 'sort_counting') {
     let a=[...SA];
     steps.push(barFrame([...a],{},'Counting Sort — Estado inicial'));
@@ -1764,11 +1879,10 @@ function buildSteps() {
       steps.push(barFrame([...output],hl,`Counting: colocando ${a[i]}`));
     }
     const fin={}; for(let k=0;k<output.length;k++) fin[k]='done';
-    steps.push(barFrame([...output],fin,'✓ Ordenado (Counting Sort)'));
+    steps.push(barFrame([...output],fin,'Ordenado (Counting Sort)'));
     return;
   }
 
-  // ── DEDUP 
   if (v === 'dedup') {
     const x=[1,2,4,4,5,7,9,10,11,11,13,14,15,16,16], y=[];
     function frame(seen, cur, label) {
@@ -1793,7 +1907,6 @@ function buildSteps() {
     return;
   }
 
-  // ── FREQ 
   if (v === 'freq') {
     const cadena='Parangaricutirimicuaro', freq={};
     [...cadena.toLowerCase()].forEach(l => { if(/[a-z]/.test(l)) freq[l]=(freq[l]||0)+1; });
@@ -1814,11 +1927,10 @@ function buildSteps() {
     }
     const done=[];
     steps.push(freqFrame([],'Contando frecuencias de letras...'));
-    ent.forEach(([l]) => { done.push(l); steps.push(freqFrame([...done],`'${l}' → ${freq[l]} aparición(es)`)); });
+    ent.forEach(([l]) => { done.push(l); steps.push(freqFrame([...done],`'${l}' -> ${freq[l]} aparicion(es)`)); });
     return;
   }
 
-  // ── GRADES 
   if (v === 'grades') {
     const cal=[8,8,7,5,0,9,9,5,6,10]; cal.sort((a,b)=>a-b);
     const prom=cal.reduce((a,b)=>a+b,0)/cal.length;
@@ -1835,11 +1947,10 @@ function buildSteps() {
       }};
     }
     steps.push(gFrame({},'','Calificaciones del grupo (ordenadas)'));
-    cal.forEach((_,i) => { const hl={}; cal.forEach((v,j)=>{if(j<=i)hl[j]=v>=7?'ok':'no';}); steps.push(gFrame(hl,true,`${cal[i]>=7?'✓ Aprobado':'✗ Reprobado'}: ${cal[i]}`)); });
+    cal.forEach((_,i) => { const hl={}; cal.forEach((v,j)=>{if(j<=i)hl[j]=v>=7?'ok':'no';}); steps.push(gFrame(hl,true,`${cal[i]>=7?'Aprobado':'Reprobado'}: ${cal[i]}`)); });
     return;
   }
 
-  // ── HARVEST 
   if (v === 'harvest') {
     const t=[12,24,16,15,20,18,6,10,12,11,14,15,12]; t.sort((a,b)=>a-b);
     const prom=t.reduce((a,b)=>a+b,0)/t.length, maxV=Math.max(...t);
@@ -1859,7 +1970,6 @@ function buildSteps() {
     return;
   }
 
-  // ── MATRIX SEARCH 
   if (v === 'msearch') {
     const A=[[4,7,2,9,5,7],[1,3,7,6,8,0],[9,2,5,7,4,6],[8,7,1,3,7,2],[5,0,6,4,2,9],[7,8,9,2,1,7]];
     const found=[];
@@ -1874,12 +1984,11 @@ function buildSteps() {
         txt(c,`Encontradas: ${fnd.map(([i,j])=>`(${i+1},${j+1})`).join(', ')||'—'}`,W/2,sy-20,{size:11,mono:true,color:C.green});
       }};
     }
-    steps.push(mFrame(null,[],'Buscando el valor 7 en la matriz 6×6'));
-    A.forEach((row,i) => row.forEach((v,j) => { if(v===7)found.push([i,j]); steps.push(mFrame([i,j],[...found],v===7?`¡Encontrado en (${i+1},${j+1})!`:`(${i+1},${j+1}) = ${v}`)); }));
+    steps.push(mFrame(null,[],'Buscando el valor 7 en la matriz 6x6'));
+    A.forEach((row,i) => row.forEach((v,j) => { if(v===7)found.push([i,j]); steps.push(mFrame([i,j],[...found],v===7?`Encontrado en (${i+1},${j+1})!`:`(${i+1},${j+1}) = ${v}`)); }));
     return;
   }
 
-  // ── MATRIX MULT 
   if (v === 'mmult') {
     const MA=[[5,6,13],[3,10,1],[2,11,3]], MB=[[1,2,1],[6,5,15],[3,11,12]], MC=[[0,0,0],[0,0,0],[0,0,0]];
     function mMulFrame(ci,cj,label) {
@@ -1893,230 +2002,210 @@ function buildSteps() {
             txt(c,v,x+(sz-pad)/2,y+(sz-pad)/2,{size:12,bold:true});
           }));
         }
-        const ox=20; drawMat(MA,ox,60,'A',ci,-1,C.accent); txt(c,'×',ox+3*sz+16,60+3*(sz-pad)/2,{size:20,color:C.muted});
+        const ox=20; drawMat(MA,ox,60,'A',ci,-1,C.accent); txt(c,'x',ox+3*sz+16,60+3*(sz-pad)/2,{size:20,color:C.muted});
         drawMat(MB,ox+3*sz+32,60,'B',-1,cj,C.orange); txt(c,'=',ox+6*sz+48,60+3*(sz-pad)/2,{size:20,color:C.muted});
         drawMat(MC,ox+6*sz+64,60,'C =',ci,cj,C.green);
       }};
     }
-    steps.push(mMulFrame(-1,-1,'Multiplicación A × B'));
-    for(let i=0;i<3;i++) for(let j=0;j<3;j++) { MC[i][j]=0; for(let k=0;k<3;k++) MC[i][j]+=MA[i][k]*MB[k][j]; steps.push(mMulFrame(i,j,`C[${i}][${j}] = ${MC[i][j]}`)); }
+    steps.push(mMulFrame(-1,-1,'Multiplicacion de matrices 3x3'));
+    for(let i=0;i<3;i++) for(let j=0;j<3;j++) {
+      MC[i][j]=0;
+      for(let k=0;k<3;k++) {
+        MC[i][j]+=MA[i][k]*MB[k][j];
+        steps.push(mMulFrame(i,j,`C[${i}][${j}] += A[${i}][${k}]*B[${k}][${j}] = ${MC[i][j]}`));
+      }
+    }
     return;
   }
 
-  // ── CINEMA 
   if (v === 'cinema') {
-    const seats=Array.from({length:6},()=>new Array(6).fill(false));
-    const ops=[["R",1,1],["R",1,2],["R",1,1],["CONSULTAR",1,2],["L",1,2],["L",1,2],["R",1,2],["R",6,6],["CONSULTAR",6,6],["R",2,5]];
-    function cinFrame(s,last,msg,label) {
+    const seats=Array.from({length:6},()=>Array(6).fill(false));
+    const ops=[['R',0,0],['R',0,1],['R',0,0],['Q',0,1],['L',0,1],['L',0,1],['R',0,1],['R',5,5],['Q',5,5],['R',1,4]];
+    function cinemaFrame(state, hi, label) {
       return { label, draw(c,W,H) {
-        const sz=52, gap=4, sx=W/2-3*(sz+gap), sy=H/2-3*(sz+gap)-10;
-        s.forEach((row,i) => row.forEach((occ,j) => {
-          const x=sx+j*(sz+gap), y=sy+i*(sz+gap), isLast=last&&last[0]===i&&last[1]===j;
-          cell(c,x,y,sz,sz, occ?C.accent+'33':C.surf, isLast?C.orange:occ?C.accent:C.border, isLast?2.5:occ?1.5:0.5);
-          txt(c,occ?'●':`${i+1},${j+1}`,x+sz/2,y+sz/2,{size:occ?20:10,mono:true,color:occ?C.accent:C.muted});
+        const sz=44, sx=W/2-3*sz, sy=H/2-3*sz;
+        state.forEach((row,i) => row.forEach((v,j) => {
+          const x=sx+j*sz, y=sy+i*sz, isHi=hi&&hi[0]===i&&hi[1]===j;
+          cell(c,x,y,sz-2,sz-2, isHi?C.orange+'44':v?C.red+'33':C.green+'22', isHi?C.orange:v?C.red:C.green, isHi?2.5:1.5);
+          txt(c,v?'X':'O',x+sz/2,y+sz/2,{size:14,bold:true,color:v?C.red:C.green});
         }));
-        txt(c,msg,W/2,sy+6*(sz+gap)+16,{size:12,mono:true,color:msg.includes('RECHAZO')?C.red:C.green});
+        const total=state.flat().filter(Boolean).length;
+        txt(c,`Reservados: ${total} / 36`,W/2,sy-18,{size:12,mono:true,color:C.muted});
       }};
     }
-    steps.push(cinFrame(seats.map(r=>[...r]),null,'Sala vacía 6×6','Sala de cine — estado inicial'));
-    ops.forEach(([a,i,j]) => {
-      const r=i-1,cc=j-1; let msg='';
-      if(a==='R'){if(!seats[r][cc]){seats[r][cc]=true;msg=`OK: reservado (${i},${j})`;}else msg=`RECHAZO: ocupado (${i},${j})`;}
-      else if(a==='L'){if(seats[r][cc]){seats[r][cc]=false;msg=`OK: liberado (${i},${j})`;}else msg=`RECHAZO: ya libre (${i},${j})`;}
-      else msg=`Estado (${i},${j}) = ${seats[r][cc]?'reservado':'libre'}`;
-      steps.push(cinFrame(seats.map(r=>[...r]),[r,cc],msg,msg));
+    steps.push(cinemaFrame(seats.map(r=>[...r]),null,'Sala de cine — todos los asientos libres'));
+    ops.forEach(([op,i,j]) => {
+      let label='';
+      if(op==='R'){ if(!seats[i][j]){seats[i][j]=true;label=`Reservado (${i+1},${j+1})`;}else{label=`Rechazado: ya ocupado (${i+1},${j+1})`;} }
+      else if(op==='L'){ if(seats[i][j]){seats[i][j]=false;label=`Liberado (${i+1},${j+1})`;}else{label=`Rechazado: ya libre (${i+1},${j+1})`;} }
+      else { label=`Consulta (${i+1},${j+1}): ${seats[i][j]?'ocupado':'libre'}`; }
+      steps.push(cinemaFrame(seats.map(r=>[...r]),[i,j],label));
     });
     return;
   }
 
-  // ── QUEUE BASIC 
   if (v === 'qbasic') {
-    function qFrame(q, hl, label) {
+    const items=[1,8,7]; let q=[];
+    function qFrame(queue, hi, label) {
       return { label, draw(c,W,H) {
-        const bw=70, bh=52, gap=4, sx=W/2-(q.length*(bw+gap))/2, y=H/2-26;
-        if(q.length>0){ txt(c,'FRENTE',sx+35,y-20,{size:9,mono:true,color:C.green}); txt(c,'FINAL',sx+(q.length-1)*(bw+gap)+35,y-20,{size:9,mono:true,color:C.orange}); }
-        q.forEach((v,i) => {
-          const x=sx+i*(bw+gap), t=hl[i]||'def';
-          cell(c,x,y,bw,bh, t==='enq'?C.accent+'44':t==='deq'?C.red+'44':C.surf, t!=='def'?C.accent:C.border, t!=='def'?2:1);
-          txt(c,v,x+bw/2,y+bh/2,{size:18,bold:true});
+        const bw=60, gap=6, sy=H/2-25, sx=W/2-(queue.length*(bw+gap))/2;
+        if(queue.length===0){txt(c,'[cola vacia]',W/2,H/2,{size:14,color:C.muted});return;}
+        queue.forEach((v,i) => {
+          const x=sx+i*(bw+gap), isHi=i===hi;
+          cell(c,x,sy,bw,50, isHi?C.accent+'33':C.surf, isHi?C.accent:C.border, isHi?2:1);
+          txt(c,v,x+bw/2,sy+25,{size:16,bold:true});
         });
-        if(!q.length) txt(c,'[ cola vacía ]',W/2,H/2,{color:C.muted,size:14});
+        txt(c,'frente',sx+bw/2,sy+60,{size:10,color:C.muted});
+        if(queue.length>1) txt(c,'final',sx+(queue.length-1)*(bw+gap)+bw/2,sy+60,{size:10,color:C.muted});
       }};
     }
-    const q=[];
-    steps.push(qFrame([],{},'Cola vacía — isEmpty() = True'));
-    q.push(1); steps.push(qFrame([...q],{0:'enq'},'enque(1)'));
-    steps.push(qFrame([...q],{0:'deq'},'deque() → elimina frente'));
-    q.shift();
-    steps.push(qFrame([],{},'Cola vacía de nuevo'));
-    q.push(8); steps.push(qFrame([...q],{0:'enq'},'enque(8)'));
-    q.push(7); steps.push(qFrame([...q],{1:'enq'},'enque(7)'));
-    steps.push(qFrame([...q],{0:'deq'},`peek() = ${q[0]}, size() = ${q.length}`));
+    steps.push(qFrame([],null,'Cola vacia'));
+    q.push(1); steps.push(qFrame([...q],q.length-1,'enque(1)'));
+    q.shift(); steps.push(qFrame([...q],null,'deque()'));
+    q.push(8); steps.push(qFrame([...q],q.length-1,'enque(8)'));
+    q.push(7); steps.push(qFrame([...q],q.length-1,'enque(7)'));
+    steps.push(qFrame([...q],0,`peek() = ${q[0]}`));
     return;
   }
 
-  // ── BANK 
   if (v === 'bank') {
-    const saldos=[1000,1000,1000,1000,1000];
-    function bankFrame(arr, phase, label) {
+    let saldos=[1000,1000,1000,1000,1000];
+    function bankFrame(s, hi, label) {
       return { label, draw(c,W,H) {
-        const bw=80,gap=10,sx=W/2-(5*(bw+gap))/2,y=H/2-30;
-        arr.forEach((v,i) => {
-          const pct=v/1000, col=v>=1000?C.green:v>=700?C.orange:C.red;
-          cell(c,sx+i*(bw+gap),y,bw,60, col+'22', col, 1.5);
-          txt(c,`P${i+1}`,sx+i*(bw+gap)+bw/2,y+18,{size:10,mono:true,color:C.muted});
-          txt(c,`$${v}`,sx+i*(bw+gap)+bw/2,y+40,{size:13,bold:true,color:col});
-        });
-        txt(c,phase,W/2,y-30,{size:12,color:C.muted});
-      }};
-    }
-    steps.push(bankFrame([...saldos],'Saldos iniciales','Saldos iniciales: $1000 c/u'));
-    for(let i=0;i<5;i++){ saldos[i]=1000-500; } steps.push(bankFrame([...saldos],'Tras retiro de $500','Después de retiro: $500 c/u'));
-    for(let i=0;i<5;i++){ saldos[i]=500+300; } steps.push(bankFrame([...saldos],'Tras depósito de $300','Después de depósito: $800 c/u'));
-    return;
-  }
-
-  // ── DEQUE VIZ 
-  if (v === 'deqv') {
-    function dqFrame(q, hlF, hlB, label) {
-      return { label, draw(c,W,H) {
-        const bw=72,bh=50,gap=5,sx=W/2-(q.length*(bw+gap))/2,y=H/2-25;
-        if(q.length){ txt(c,'◄ FRENTE',sx,y-22,{size:9,mono:true,color:C.cyan,align:'left'}); txt(c,'FINAL ►',sx+(q.length-1)*(bw+gap)+bw,y-22,{size:9,mono:true,color:C.orange,align:'right'}); }
-        q.forEach((v,i) => {
-          const isF=i===0&&hlF, isB=i===q.length-1&&hlB;
-          cell(c,sx+i*(bw+gap),y,bw,bh, isF?C.cyan+'33':isB?C.orange+'33':C.surf, isF?C.cyan:isB?C.orange:C.border, isF||isB?2:1);
-          txt(c,v,sx+i*(bw+gap)+bw/2,y+bh/2,{size:18,bold:true});
-        });
-        if(!q.length) txt(c,'[ bicola vacía ]',W/2,H/2,{color:C.muted});
-      }};
-    }
-    const q=[];
-    steps.push(dqFrame([],false,false,'Bicola vacía'));
-    q.push(1000); steps.push(dqFrame([...q],false,true,'enque_back(1000)'));
-    q.push(1000); steps.push(dqFrame([...q],false,true,'enque_back(1000) × 5 personas'));
-    q.push(1000); q.push(1000); q.push(1000);
-    steps.push(dqFrame([...q],false,false,'5 personas en la bicola con $1000 c/u'));
-    const r=q.shift()-500; q.push(r); steps.push(dqFrame([...q],true,false,`dequeue_front() → retiro $500 → enque_back($${r})`));
-    steps.push(dqFrame([...q],false,false,'Historial: saldo antes de retiro = $1000'));
-    return;
-  }
-
-  // ── CIRC QUEUE 
-  if (v === 'circq' || v === 'circq2') {
-    const cap=5, slots=new Array(cap).fill(null);
-    let fr=-1, fi=-1;
-    function cqFrame(s,f,e,label) {
-      return { label, draw(c,W,H) {
-        const cx=W/2, cy=H/2, R=Math.min(W,H)*0.3;
+        const bw=60, gap=8, sx=W/2-(s.length*(bw+gap))/2, sy=H/2-30;
         s.forEach((v,i) => {
-          const ang=-Math.PI/2+(2*Math.PI/cap)*i, x=cx+R*Math.cos(ang), y=cy+R*Math.sin(ang);
-          const isF=i===f, isE=i===e, hasV=v!==null;
-          circle(c,x,y,28, isF&&isE?C.accent+'44':isF?C.green+'33':isE?C.orange+'33':hasV?C.surf:'#0c0c14', isF||isE?C.accent:hasV?C.border:'#2e2e4a', isF||isE?2.5:1);
-          txt(c,v===null?'_':v,x,y,{size:12,bold:true,mono:true});
-          txt(c,i,x,y+20,{size:8,mono:true,color:C.muted});
+          const isHi=i===hi;
+          cell(c,sx+i*(bw+gap),sy,bw,50, isHi?C.accent+'33':C.surf, isHi?C.accent:C.border, isHi?2:1);
+          txt(c,`$${v}`,sx+i*(bw+gap)+bw/2,sy+25,{size:12,bold:true});
+          txt(c,`P${i+1}`,sx+i*(bw+gap)+bw/2,sy-14,{size:10,color:C.muted});
         });
-        if(f>=0){ const a=-Math.PI/2+(2*Math.PI/cap)*f; txt(c,'F',cx+(R+44)*Math.cos(a),cy+(R+44)*Math.sin(a),{size:11,mono:true,color:C.green}); }
-        if(e>=0){ const a=-Math.PI/2+(2*Math.PI/cap)*e; txt(c,'E',cx+(R+44)*Math.cos(a),cy+(R+44)*Math.sin(a),{size:11,mono:true,color:C.orange}); }
-        txt(c,'F=Frente  E=Final',W/2,H-20,{size:10,color:C.muted});
       }};
     }
-    steps.push(cqFrame([...slots],fr,fi,'Cola circular vacía (cap=5)'));
-    ['T1','T2','T3','T4','T5'].forEach(t => { if(fr===-1){fr=fi=0;}else{fi=(fi+1)%cap;} slots[fi]=t; steps.push(cqFrame([...slots],fr,fi,`encolar("${t}")`)); });
-    ['T1','T2'].forEach(() => { const d=slots[fr]; slots[fr]=null; fr=(fr+1)%cap; steps.push(cqFrame([...slots],fr,fi,`desencolar() → "${d}"`)); });
-    ['T6','T7'].forEach(t => { fi=(fi+1)%cap; slots[fi]=t; steps.push(cqFrame([...slots],fr,fi,`encolar("${t}") — reutiliza posición`)); });
+    steps.push(bankFrame([...saldos],null,'Saldos iniciales: $1000 c/u'));
+    for(let i=0;i<5;i++){ saldos[i]-=500; steps.push(bankFrame([...saldos],i,`Retiro $500 de P${i+1} -> $${saldos[i]}`)); }
+    for(let i=0;i<5;i++){ saldos[i]+=300; steps.push(bankFrame([...saldos],i,`Deposito $300 en P${i+1} -> $${saldos[i]}`)); }
     return;
   }
 
-  // ── DEQUE MODULE 
-  if (v === 'dqmod') {
-    const saldos=[1000,1000,1000,1000,1000], hR=[], hD=[];
-    function dqmFrame(s,hr,hd,phase,label) {
+  if (v === 'deqv' || v === 'dqmod') {
+    const items=[1000,1000,1000,1000,1000]; let q=[...items];
+    function deqFrame(queue, label) {
       return { label, draw(c,W,H) {
-        const bw=64,bh=42,gap=6,sx=W/2-(5*(bw+gap))/2;
-        txt(c,'Cola de saldos:',sx,H*0.25-20,{size:10,mono:true,color:C.muted,align:'left'});
-        s.forEach((v,i) => { cell(c,sx+i*(bw+gap),H*0.25,bw,bh,C.accent+'22',C.accent,1.5); txt(c,`$${v}`,sx+i*(bw+gap)+bw/2,H*0.25+bh/2,{size:11,bold:true,color:C.accent}); });
-        if(hr.length){ txt(c,'Historial retiros:',sx,H*0.52-20,{size:10,mono:true,color:C.muted,align:'left'}); hr.forEach((v,i) => { cell(c,sx+i*(bw+gap),H*0.52,bw,bh,C.red+'22',C.red,1.5); txt(c,`$${v}`,sx+i*(bw+gap)+bw/2,H*0.52+bh/2,{size:11,bold:true,color:C.red}); }); }
-        if(hd.length){ txt(c,'Historial depósitos:',sx,H*0.75-20,{size:10,mono:true,color:C.muted,align:'left'}); hd.forEach((v,i) => { cell(c,sx+i*(bw+gap),H*0.75,bw,bh,C.green+'22',C.green,1.5); txt(c,`$${v}`,sx+i*(bw+gap)+bw/2,H*0.75+bh/2,{size:11,bold:true,color:C.green}); }); }
+        const bw=60, gap=6, sy=H/2-25, sx=W/2-(queue.length*(bw+gap))/2;
+        if(!queue.length){txt(c,'[deque vacio]',W/2,H/2,{size:14,color:C.muted});return;}
+        queue.forEach((v,i) => {
+          cell(c,sx+i*(bw+gap),sy,bw,50,C.surf,C.border,1);
+          txt(c,v,sx+i*(bw+gap)+bw/2,sy+25,{size:13,bold:true});
+        });
+        txt(c,'front',sx+bw/2,sy+62,{size:10,color:C.muted});
+        txt(c,'back',sx+(queue.length-1)*(bw+gap)+bw/2,sy+62,{size:10,color:C.muted});
       }};
     }
-    steps.push(dqmFrame([...saldos],[],[],'inicio','5 personas con $1000 c/u'));
-    for(let i=0;i<5;i++){ const s=saldos.shift(); hR.push(s); saldos.push(s-500); } steps.push(dqmFrame([...saldos],[...hR],[],'retiro',`Tras retiros de $500 → saldos: $${saldos[0]}`));
-    for(let i=0;i<5;i++){ const s=saldos.shift(); hD.push(s); saldos.push(s+300); } steps.push(dqmFrame([...saldos],[...hR],[...hD],'deposito',`Tras depósitos de $300 → saldos: $${saldos[0]}`));
+    steps.push(deqFrame([...q],'Bicola inicial (saldos $1000)'));
+    for(let i=0;i<5;i++){ const s=q.shift(); q.push(s-500); steps.push(deqFrame([...q],`Retiro $500: ${s} -> ${s-500}`)); }
+    for(let i=0;i<5;i++){ const s=q.shift(); q.push(s+300); steps.push(deqFrame([...q],`Deposito $300: ${s} -> ${s+300}`)); }
     return;
   }
 
-  // ── RATE LIMIT 
-  if (v === 'ratelim') {
-    const reqs=[0,2,4,6,12], maxP=3, t=10, active=[];
-    function rlFrame(all,act,cur,ok,label) {
+  if (v === 'circq' || v === 'circq2') {
+    const cap=5; let cola=[], fr=0, fin=-1;
+    const ops_c=[['E','Turno 1'],['E','Turno 2'],['E','Turno 3'],['E','Turno 4'],['E','Turno 5'],['D',null],['D',null],['E','Turno 6'],['E','Turno 7'],['D',null]];
+    function circFrame(q, label) {
       return { label, draw(c,W,H) {
-        const tw=W-80, tx=40, ty=H/2-60, th=50;
-        line(c,tx,ty+th/2,tx+tw,ty+th/2,C.border,2);
-        for(let tt=0;tt<=14;tt+=2){ const x=tx+(tt/14)*tw; line(c,x,ty+th/2-5,x,ty+th/2+5,C.border,1); txt(c,tt,x,ty+th+14,{size:9,mono:true,color:C.muted}); }
-        if(act.length){ const oldest=act[act.length-1], ws=oldest-t, wx=tx+Math.max(0,ws/14)*tw, ww=(t/14)*tw; c.fillStyle=C.accent+'11'; c.fillRect(wx,ty,ww,th); c.strokeStyle=C.accent+'44'; c.lineWidth=1; c.strokeRect(wx,ty,ww,th); }
-        all.forEach(tt => {
-          const x=tx+(tt/14)*tw, isA=act.includes(tt), isCur=tt===cur;
-          circle(c,x,ty+th/2,11, isCur?(ok?C.green:C.red):isA?C.accent:C.surf, isCur?(ok?C.green:C.red):isA?C.accent:C.border, isCur?2.5:1);
-          txt(c,`s${tt}`,x,ty+th/2,{size:8,mono:true,color:C.text});
-        });
-        txt(c,`Ventana activa (${maxP} máx): [${act.join(', ')}]`,tx,ty-20,{size:10,mono:true,align:'left',color:C.muted});
+        const cx2=W/2, cy=H/2, r=Math.min(W,H)*0.3;
+        for(let i=0;i<cap;i++){
+          const ang=(i/cap)*Math.PI*2-Math.PI/2;
+          const x=cx2+r*Math.cos(ang), y=cy+r*Math.sin(ang);
+          const v=q[i];
+          circle(c,x,y,28, v?C.accent+'33':C.surf, v?C.accent:C.border, v?2:1);
+          txt(c,v||i,x,y,{size:11,mono:true,color:v?C.accent:C.muted});
+        }
+        txt(c,`Elementos: ${q.filter(Boolean).length} / ${cap}`,W/2,H-20,{size:11,color:C.muted});
       }};
     }
-    steps.push(rlFrame([],[],-1,true,'Rate Limiter: máx 3 peticiones / 10s'));
-    reqs.forEach(seg => {
-      while(active.length && active[active.length-1] <= seg-t) active.pop();
-      const ok=active.length<maxP; if(ok) active.unshift(seg);
-      steps.push(rlFrame([...reqs],[...active],seg,ok,`s=${seg}: ${ok?'✓ ACEPTADA':'✗ EN ESPERA (límite alcanzado)'}`));
+    let arr=Array(cap).fill(null), head=0, tail=0, sz=0;
+    steps.push(circFrame([...arr],'Cola circular vacia (cap=5)'));
+    ops_c.forEach(([op,val])=>{
+      if(op==='E'&&sz<cap){arr[tail]=val;tail=(tail+1)%cap;sz++;}
+      else if(op==='D'&&sz>0){arr[head]=null;head=(head+1)%cap;sz--;}
+      steps.push(circFrame([...arr],op==='E'?`encolar: ${val}`:'desencolar'));
     });
     return;
   }
 
-  // ── RETRY 
-  if (v === 'retry') {
-    const tasks=[["T1",1],["T2",0],["T3",2],["T4",1],["T5",0]], queue=[...tasks], done=[];
-    function retryFrame(q,d,cur,label) {
+  if (v === 'ratelim') {
+    const secs=[0,2,4,6,12], max=3, win=10;
+    let active=[], waiting=[];
+    function rlFrame(act, wait, cur, label) {
       return { label, draw(c,W,H) {
-        const bw=76,bh=44,gap=8,sx=40,y=H/2-22;
-        txt(c,'Cola de tareas:',sx,y-22,{size:10,mono:true,color:C.muted,align:'left'});
-        q.forEach(([name,f],i) => {
-          const isCur=name===cur;
-          cell(c,sx+i*(bw+gap),y,bw,bh, isCur?C.accent+'44':C.surf, isCur?C.accent:C.border, isCur?2:1);
-          txt(c,name,sx+i*(bw+gap)+bw/2,y+18,{size:14,bold:true});
-          txt(c,`fallos:${f}`,sx+i*(bw+gap)+bw/2,y+34,{size:9,mono:true,color:C.orange});
-        });
-        if(d.length){ txt(c,'Completadas:',sx,H-60,{size:10,mono:true,color:C.muted,align:'left'}); d.forEach((name,i) => { cell(c,sx+i*(bw+gap),H-52,bw,36, C.green+'22',C.green,1.5); txt(c,name,sx+i*(bw+gap)+bw/2,H-34,{size:13,bold:true,color:C.green}); }); }
+        const bw=70, gap=8, sy=H*0.25, sy2=H*0.6;
+        txt(c,'Ventana activa:',W/2,sy-22,{size:12,bold:true,color:C.text});
+        for(let i=0;i<max;i++){
+          const x=W/2+(i-max/2)*(bw+gap)+gap/2;
+          const v=act[i];
+          cell(c,x,sy,bw,40, v?C.green+'33':C.surf, v?C.green:C.border, v?2:1);
+          if(v) txt(c,`P${v[0]}\ns=${v[1]}`,x+bw/2,sy+20,{size:10,mono:true,color:C.green});
+        }
+        txt(c,'En espera:',W/2,sy2-20,{size:12,bold:true,color:C.text});
+        wait.forEach((w,i)=>{ const x=W/2+(i-wait.length/2)*(bw+gap)+gap/2; cell(c,x,sy2,bw,40,C.orange+'33',C.orange,1.5); txt(c,`P${w[0]}\ns=${w[1]}`,x+bw/2,sy2+20,{size:10,mono:true,color:C.orange}); });
+        if(!wait.length) txt(c,'(ninguna)',W/2,sy2+20,{size:11,color:C.muted});
       }};
     }
-    steps.push(retryFrame([...queue],[],null,'Cola inicial de tareas con reintentos'));
-    while(queue.length){ const [n,f]=queue.shift(); if(f>0){queue.push([n,f-1]);steps.push(retryFrame([...queue],[...done],n,`${n} falló → reintento al final`));}else{done.push(n);steps.push(retryFrame([...queue],[...done],null,`${n} ✓ completada`));} }
+    steps.push(rlFrame([],[],null,'Rate Limiter: max 3 por 10 seg'));
+    secs.forEach((s,idx)=>{
+      while(active.length&&active[active.length-1][1]<=s-win){ const done=active.pop(); if(waiting.length){active.unshift(waiting.shift());} }
+      if(active.length<max){ active.unshift([idx+1,s]); steps.push(rlFrame([...active],[...waiting],idx+1,`P${idx+1} (s=${s}): Aceptada`)); }
+      else { waiting.push([idx+1,s]); steps.push(rlFrame([...active],[...waiting],idx+1,`P${idx+1} (s=${s}): En espera`)); }
+    });
     return;
   }
 
-  // ── STACK 
-  if (v === 'stackv' || v === 'candystack') {
-    const items = v==='candystack' ? [11890,12500.5,13010.35,13650.8,14100,14780.4,14999.99,15120,15550.75,15800,16250.25] : [1,2,3];
-    function stkFrame(stk, hl, label) {
+  if (v === 'retry') {
+    const tasks=[{n:'T1',f:1},{n:'T2',f:0},{n:'T3',f:2},{n:'T4',f:1},{n:'T5',f:2},{n:'T6',f:2}];
+    let q=[...tasks.map(t=>({...t}))], done=[];
+    function retryFrame(queue, finished, cur, label) {
       return { label, draw(c,W,H) {
-        const bw=180, bh=42, gap=3, sx=W/2-90, baseY=H-50;
-        c.fillStyle=C.border; c.fillRect(sx-12,baseY,bw+24,6);
-        stk.forEach((v,i) => {
-          const y=baseY-(i+1)*(bh+gap), isTop=i===stk.length-1, isHl=hl===i;
-          cell(c,sx,y,bw,bh, isTop?C.accent+'33':isHl?C.red+'33':C.surf, isTop?C.accent:C.border, isTop?2:1);
-          txt(c,v,sx+bw/2,y+bh/2,{size:v>9999?11:14,bold:true,mono:v>9999});
-          if(isTop){ txt(c,'← TOP',sx+bw+8,y+bh/2,{size:9,mono:true,align:'left',color:C.accent}); }
-        });
-        if(!stk.length) txt(c,'[ pila vacía ]',W/2,H/2,{color:C.muted});
+        const bw=55, gap=6, sy=H*0.3, sy2=H*0.65;
+        txt(c,'Cola:',40,sy-20,{size:12,bold:true,align:'left',color:C.text});
+        queue.forEach((t,i)=>{ const x=40+i*(bw+gap); cell(c,x,sy,bw,40,t.n===cur?C.orange+'44':C.surf,t.n===cur?C.orange:C.border,t.n===cur?2:1); txt(c,t.n,x+bw/2,sy+15,{size:12,bold:true}); txt(c,`f:${t.f}`,x+bw/2,sy+30,{size:9,color:C.muted}); });
+        if(!queue.length) txt(c,'(vacia)',80,sy+20,{size:11,color:C.muted});
+        txt(c,'Completadas:',40,sy2-20,{size:12,bold:true,align:'left',color:C.green});
+        finished.forEach((t,i)=>{ const x=40+i*(bw+gap); cell(c,x,sy2,bw,40,C.green+'22',C.green,1.5); txt(c,t.n,x+bw/2,sy2+20,{size:12,bold:true,color:C.green}); });
       }};
     }
-    const stk=[];
-    steps.push(stkFrame([],null,'Pila vacía'));
+    steps.push(retryFrame([...q],[],null,'Estado inicial de la bicola'));
+    let iter=0;
+    while(q.length&&iter<50){
+      iter++;
+      const t=q.shift();
+      if(t.f>0){ t.f--; q.push(t); steps.push(retryFrame([...q],[...done],t.n,`${t.n}: fallo -> reintentar (fallos restantes: ${t.f})`)); }
+      else { done.push(t); steps.push(retryFrame([...q],[...done],null,`${t.n}: completada`)); }
+    }
+    return;
+  }
+
+  if (v === 'stackv' || v === 'candystack') {
+    const items = v==='candystack' ? [11890,12500.5,13010.35,13650.8,13999,14100,14780.4,14999.99,15120,15550.75,15800,16250.25] : [1,2,3];
+    let stk=[];
+    function stkFrame(stack, hiIdx, label) {
+      return { label, draw(c,W,H) {
+        const bw=Math.min(160,W*0.4), bh=32, sx=(W-bw)/2, baseY=H-60;
+        if(!stack.length){txt(c,'[pila vacia]',W/2,H/2,{size:14,color:C.muted});}
+        stack.forEach((v,i) => {
+          const y=baseY-(i+1)*bh, isHi=i===hiIdx;
+          cell(c,sx,y,bw,bh-2, isHi?C.accent+'44':C.surf, isHi?C.accent:C.border, isHi?2:1);
+          txt(c,v,sx+bw/2,y+bh/2-1,{size:11,mono:true});
+        });
+        if(stack.length) txt(c,'<- top',sx+bw+8,baseY-stack.length*bh+bh/2,{size:10,color:C.muted,align:'left'});
+      }};
+    }
+    steps.push(stkFrame([],null,'Pila vacia'));
     items.forEach(v => { stk.push(v); steps.push(stkFrame([...stk],stk.length-1,`push(${v})`)); });
     steps.push(stkFrame([...stk],stk.length-1,`peek() = ${stk[stk.length-1]}`));
-    const p=stk.pop(); steps.push(stkFrame([...stk],null,`pop() → ${p}`));
+    const p=stk.pop(); steps.push(stkFrame([...stk],null,`pop() = ${p}`));
     return;
   }
 
-  // ── BST 
   if (v === 'bst' || v === 'traversal') {
     const seq = v==='bst' ? [1,13,11,5,9,10,12,3,6] : [3,1,4,2,5];
     let tree=null;
@@ -2143,7 +2232,6 @@ function buildSteps() {
     return;
   }
 
-  // ── BFS 
   if (v === 'bfsv') {
     const pos={A:{x:.5,y:.1},B:{x:.25,y:.35},C:{x:.75,y:.35},D:{x:.1,y:.65},E:{x:.4,y:.65},F:{x:.6,y:.65},G:{x:.9,y:.65}};
     const edges=[['A','B'],['A','C'],['B','D'],['B','E'],['C','F'],['C','G']];
@@ -2166,7 +2254,6 @@ function buildSteps() {
     return;
   }
 
-  // ── DIJKSTRA 
   if (v === 'dijkv') {
     const pos={0:{x:.12,y:.5},1:{x:.32,y:.2},2:{x:.65,y:.82},3:{x:.6,y:.28},4:{x:.45,y:.6},5:{x:.78,y:.28},6:{x:.52,y:.72},7:{x:.82,y:.55}};
     const graph={0:{1:9,4:6},1:{0:9,3:8},2:{4:5,5:6},3:{1:8,5:1,7:7},4:{0:6,2:5,6:3},5:{2:6,3:1},6:{4:3,7:2},7:{3:7,6:2}};
@@ -2175,7 +2262,7 @@ function buildSteps() {
     function dijkFrame(vis,cur,label) {
       return { label, draw(c,W,H) {
         Object.keys(graph).forEach(u=>Object.keys(graph[u]).forEach(v=>{if(+u<+v){ const pu=pos[u],pv=pos[v]; line(c,pu.x*W,pu.y*H,pv.x*W,pv.y*H,C.border,1); txt(c,graph[u][v],(pu.x+pv.x)/2*W,(pu.y+pv.y)/2*H,{size:9,mono:true,color:C.muted}); }}));
-        Object.keys(graph).forEach(n=>{ const p=pos[n],x=p.x*W,y=p.y*H,isV=vis.includes(+n),isCur=+n===+cur; circle(c,x,y,20, isCur?C.accent:isV?C.green+'33':C.surf, isCur?C.accent:isV?C.green:C.border, isCur||isV?2:1.5); txt(c,n,x,y,{size:13,bold:true}); const d=dist[n]; txt(c,d===Infinity?'∞':d,x,y+26,{size:9,mono:true,color:C.orange}); });
+        Object.keys(graph).forEach(n=>{ const p=pos[n],x=p.x*W,y=p.y*H,isV=vis.includes(+n),isCur=+n===+cur; circle(c,x,y,20, isCur?C.accent:isV?C.green+'33':C.surf, isCur?C.accent:isV?C.green:C.border, isCur||isV?2:1.5); txt(c,n,x,y,{size:13,bold:true}); const d=dist[n]; txt(c,d===Infinity?'inf':d,x,y+26,{size:9,mono:true,color:C.orange}); });
       }};
     }
     const vis=[], pq=[[0,0]];
@@ -2184,7 +2271,6 @@ function buildSteps() {
     return;
   }
 
-  // ── PRIM 
   if (v === 'primv') {
     const pos={'0':{x:.2,y:.3},'1':{x:.5,y:.15},'2':{x:.2,y:.72},'3':{x:.7,y:.72},'4':{x:.65,y:.35},'5':{x:.85,y:.55}};
     const graph={'0':{'2':20,'1':10},'1':{'0':10,'4':10,'3':50},'2':{'0':20,'4':33,'3':20},'3':{'1':50,'2':20,'4':20,'5':2},'4':{'2':33,'1':10,'3':20,'5':1},'5':{'4':1,'3':2}};
@@ -2199,11 +2285,10 @@ function buildSteps() {
     }
     const vis=['2']; steps.push(primFrame([...vis],[],'Inicio Prim desde nodo 2'));
     const pq=[]; Object.entries(graph['2']).forEach(([v,w])=>pq.push([w,'2',v]));
-    while(pq.length){ pq.sort((a,b)=>a[0]-b[0]); const [w,u,v]=pq.shift(); if(vis.includes(v))continue; vis.push(v); mstEdges.push([u,v]); steps.push(primFrame([...vis],[...mstEdges],`Añadir arista ${u}—${v} (peso ${w})`)); Object.entries(graph[v]).forEach(([nb,pw])=>{if(!vis.includes(nb))pq.push([pw,v,nb]);}); }
+    while(pq.length){ pq.sort((a,b)=>a[0]-b[0]); const [w,u,v]=pq.shift(); if(vis.includes(v))continue; vis.push(v); mstEdges.push([u,v]); steps.push(primFrame([...vis],[...mstEdges],`Arista ${u}-${v} (peso ${w})`)); Object.entries(graph[v]).forEach(([nb,pw])=>{if(!vis.includes(nb))pq.push([pw,v,nb]);}); }
     return;
   }
 
-  // ── HANOI 
   if (v === 'hanoi') {
     const N=4, rods={A:[],B:[],C:[]};
     for(let i=N;i>=1;i--) rods.A.push(i);
@@ -2215,28 +2300,22 @@ function buildSteps() {
           txt(c,r,x,baseY+24,{size:14,bold:true,color:C.muted});
           state[r].forEach((disk,i) => {
             const w=18+disk*(maxW/N), y=baseY-(i+1)*dh, isMoved=moved===disk;
-            c.fillStyle=isMoved?C.accent:[C.red,C.orange,C.green,C.cyan][disk-1]||C.muted;
+            c.fillStyle=isMoved?C.accent:['#e55','#f90','#2a9','#39d'][disk-1]||C.muted;
             c.beginPath(); c.roundRect(x-w/2,y,w,dh-2,4); c.fill();
-            txt(c,disk,x,y+(dh-2)/2,{size:9,mono:true,color:'rgba(0,0,0,0.6)',bold:true});
+            txt(c,disk,x,y+(dh-2)/2,{size:9,mono:true,color:'#fff',bold:true});
           });
         });
       }};
     }
-    steps.push(hFrame({A:[...rods.A],B:[...rods.B],C:[...rods.C]},null,`Torres de Hanoi — ${N} discos`));
-    function hanoi(n,from,to,aux){ if(n===0)return; hanoi(n-1,from,aux,to); const disk=rods[from].pop(); rods[to].push(disk); steps.push(hFrame({A:[...rods.A],B:[...rods.B],C:[...rods.C]},disk,`Disco ${disk}: ${from} → ${to}`)); hanoi(n-1,aux,to,from); }
+    steps.push(hFrame({A:[...rods.A],B:[...rods.B],C:[...rods.C]},null,`Torres de Hanoi - ${N} discos`));
+    function hanoi(n,from,to,aux){ if(n===0)return; hanoi(n-1,from,aux,to); const disk=rods[from].pop(); rods[to].push(disk); steps.push(hFrame({A:[...rods.A],B:[...rods.B],C:[...rods.C]},disk,`Disco ${disk}: ${from} -> ${to}`)); hanoi(n-1,aux,to,from); }
     hanoi(N,'A','C','B');
     return;
   }
 
-  // ── NONE / DEFAULT 
-  steps.push({ label:'Este ejercicio usa archivo CSV externo — ver código', draw(c,W,H) {
-    txt(c,'📊',W/2,H/2-40,{size:40});
-    txt(c,'dataframe.py requiere pandas y el archivo Housing1.csv',W/2,H/2+10,{size:13,color:C.muted});
-    txt(c,'Copia el código y ejecútalo en VS Code con tu archivo CSV',W/2,H/2+34,{size:11,mono:true,color:C.accent});
-  }});
+  
 }
 
-// ── INIT 
 setMode('both');
 select(CATS[0].items[0], CATS[0].color, CATS[0].name);
 </script>
