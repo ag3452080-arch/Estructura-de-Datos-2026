@@ -7,7 +7,7 @@ df = pd.read_csv("C:/Users/Hogar/OneDrive/Documentos/Estructura de Datos 2026/Ho
 #Mostrar las primeras 5 filas
 print(df.head())
 lista = list(df["price"])
-
+ 
 print("Media de Los datos") 
 suma = 0
 moda = 0
